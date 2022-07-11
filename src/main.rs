@@ -19,63 +19,63 @@ impl ArticleSort for Article {
         unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, article.template_path)
       }
     }
-    // create vec[...tutorial_articles, ...project_articles, ...opinion_articles, ...misc_articles, ...guide_articles]
-    let mut sorted_articles: Vec<Article> = vec![];
-    for mut genre in articles {
-      genre.sort_by_key(| article: &Article | article.content.len());
+    // vec[...tutorial_articles, ...project_articles, ...opinion_articles, ...misc_articles, ...guide_articles]
+    for genre in &mut articles {
+      genre.sort_by_key(| article | article.content.len());
       genre.reverse();
-      sorted_articles.append(&mut genre);
     }
-    sorted_articles
+    articles.into_iter().flatten().collect::<Vec<Article>>()
   }
 }
 
 fn main() {
-  let mut render: Render = Render::new("public/**/*.tera");
-  render.verbose = true;
-  render.clear_on_start = true;
-  render.copy_dirs = vec![
-    CopyDetails("./public/images/**/*", r"\.(png|jpg)$", false),
-    CopyDetails("./public/scripts/vendor/*.js", r"\.js$", false),
-    CopyDetails("./public/scripts/*.js", r"\.js$", true),
-    CopyDetails("./public/styles/vendor/**/*", r"\.(css|woff|woff2)$", true)
-  ];
-  render.copy_files = vec![
-    CopyDetails("./public/sitemap.xml", "./dist/sitemap.xml", false)
-  ];
-  render.http_301_assets = vec![
-    ["./dist/articles/Bootstrap/how_to_change_the_default_font_in_bootstrap/index.html", "/articles/CSS/how-to-change-the-default-font-in-bootstrap.html"],
-    ["./dist/articles/Git/how_to_avoid_overusing_the_git_keyword/index.html", "/articles/Git/how-to-avoid-retyping-the-git-keyword.html"],
-    ["./dist/articles/Go/globbing_in_go/index.html", "/articles/Go Lang/globbing-in-go.html"],
-    ["./dist/articles/HTML/how_to_open_html_links_in_new_tabs/index.html", "/articles/HTML/how-to-open-html-links-in-new-tabs.html"],
-    ["./dist/articles/Node.js/environment_detection_in_javascript/index.html", "/articles/JavaScript/environment-detection-in-javascript.html"],
-    ["./dist/articles/Perl/how_to_unzip_an_archive_using_perl/index.html", "/articles/Perl/how-to-call-a-subprocess-in-perl.html"],
-    ["./dist/articles/Pip/an_introduction_to_the_pip_package_manager/index.html", "/articles/Python/an-introduction-to-the-pip-package-manager.html"],
-    ["./dist/articles/SASS/how_to_extend_parent_selectors_in_sass/index.html", "/articles/CSS/how-to-extend-parent-selectors-in-sass.html"],
-    ["./dist/articles/Web_Development/how_to_create_a_development_server_using_http_server/index.html", "/articles/Python/how-to-create-a-development-server-using-http-server.html"]
-  ];
-  render.http_410_assets = vec![
-    "./dist/about/index.html",
-    "./dist/contact/index.html",
-    "./dist/img/index.html",
-    "./dist/info/index.html",
-    "./dist/articles/jQuery/how_to_modify_the_jquery_global_without_modifying_jquery/index.html",
-    "./dist/articles/jQuery/how_to_scroll_to_an_element_on_click/index.html",
-    "./dist/articles/Node.js/brace_expansion_in_shelljs/index.html",
-    "./dist/articles/Web_Development/how_to_setup_a_development_server_using_express/index.html",
-    "./dist/articles/Web_Development/how_to_setup_a_development_server_using_flask/index.html"
-  ];
-  render.scss_assets = vec![
-    ["./public/styles/app.scss", "./dist/styles/app.css"],
-    ["./public/styles/http.scss", "./dist/styles/http.css"]
-  ];
+  let mut render: Render = Render {
+    verbose: true,
+    empty_dist: true,
+    tera: Render::tera_instance("public/**/*.tera"),
+    empty_context: Context::new(),
+    copy_dirs: vec![
+      CopyDetails("./public/images/**/*", r"\.(png|jpg)$", false),
+      CopyDetails("./public/scripts/vendor/*.js", r"\.js$", false),
+      CopyDetails("./public/scripts/*.js", r"\.js$", true),
+      CopyDetails("./public/styles/vendor/**/*", r"\.(css|woff|woff2)$", true)
+    ],
+    copy_files: vec![
+      CopyDetails("./public/sitemap.xml", "./dist/sitemap.xml", false)
+    ],
+    assets_301: vec![
+      ["./dist/articles/Bootstrap/how_to_change_the_default_font_in_bootstrap/index.html", "/articles/CSS/how-to-change-the-default-font-in-bootstrap.html"],
+      ["./dist/articles/Git/how_to_avoid_overusing_the_git_keyword/index.html", "/articles/Git/how-to-avoid-retyping-the-git-keyword.html"],
+      ["./dist/articles/Go/globbing_in_go/index.html", "/articles/Go Lang/globbing-in-go.html"],
+      ["./dist/articles/HTML/how_to_open_html_links_in_new_tabs/index.html", "/articles/HTML/how-to-open-html-links-in-new-tabs.html"],
+      ["./dist/articles/Node.js/environment_detection_in_javascript/index.html", "/articles/JavaScript/environment-detection-in-javascript.html"],
+      ["./dist/articles/Perl/how_to_unzip_an_archive_using_perl/index.html", "/articles/Perl/how-to-call-a-subprocess-in-perl.html"],
+      ["./dist/articles/Pip/an_introduction_to_the_pip_package_manager/index.html", "/articles/Python/an-introduction-to-the-pip-package-manager.html"],
+      ["./dist/articles/SASS/how_to_extend_parent_selectors_in_sass/index.html", "/articles/CSS/how-to-extend-parent-selectors-in-sass.html"],
+      ["./dist/articles/Web_Development/how_to_create_a_development_server_using_http_server/index.html", "/articles/Python/how-to-create-a-development-server-using-http-server.html"]
+    ],
+    assets_410: vec![
+      "./dist/about/index.html",
+      "./dist/contact/index.html",
+      "./dist/img/index.html",
+      "./dist/info/index.html",
+      "./dist/articles/jQuery/how_to_modify_the_jquery_global_without_modifying_jquery/index.html",
+      "./dist/articles/jQuery/how_to_scroll_to_an_element_on_click/index.html",
+      "./dist/articles/Node.js/brace_expansion_in_shelljs/index.html",
+      "./dist/articles/Web_Development/how_to_setup_a_development_server_using_express/index.html",
+      "./dist/articles/Web_Development/how_to_setup_a_development_server_using_flask/index.html"
+    ],
+    scss_assets: vec![
+      ["./public/styles/app.scss", "./dist/styles/app.css"],
+      ["./public/styles/http.scss", "./dist/styles/http.css"]
+    ]
+  };
 
-  render.clear_on_start();
-  render.copy_dirs();
-  render.copy_files();
+  render.empty_dist();
+  render.copy_static();
   render.compile_scss();
-  render.render_301("301.tera");
-  render.render_410("410.tera");
+  render.assets_301("301.tera");
+  render.assets_410("410.tera");
   render.template("404.tera", "./dist/404.html", &render.empty_context);
 
   // create the article list
@@ -96,7 +96,7 @@ fn main() {
   let mut article_context: Context = Context::new();
   article_context.insert("articles", &article_list);
   for mut article in article_list {
-    article.content = render.template_string(&format!("{}.tera", &article.slug), &article.content, &article_context);
+    article.content = render.template_string(&article.content, &article_context);
     article_context.insert("content", &article.content);
     article_context.insert("article", &article);
     article_context.insert("page_name", "article");
