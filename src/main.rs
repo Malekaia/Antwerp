@@ -7,7 +7,7 @@ use tera::Context;
 
 impl ArticleSort for Article {
   fn sort_list(article_list: Vec<Article>) -> Vec<Article> {
-    // sort into vec[vec[tutorial_articles], vec[project_articles], vec[opinion_articles], vec[misc_articles], vec[guide_articles]]
+    // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
     let mut articles: Vec<Vec<Article>> = vec![vec![], vec![], vec![], vec![], vec![]];
     for article in article_list {
       match &*article.genre {
@@ -19,7 +19,8 @@ impl ArticleSort for Article {
         unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, article.template_path)
       }
     }
-    // vec[...tutorial_articles, ...project_articles, ...opinion_articles, ...misc_articles, ...guide_articles]
+
+    // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
     for genre in &mut articles {
       genre.sort_by_key(| article | article.content.len());
       genre.reverse();
