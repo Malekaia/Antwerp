@@ -1,10 +1,6 @@
-use glob::glob;
-use regex::Regex;
-use std::{fs, fs::File, path::Path, io::prelude::Write};
+pub mod file_system {
+  use std::{fs, fs::File, path::Path, io::prelude::Write};
 
-pub struct FileSystem { }
-
-impl FileSystem {
   pub fn read_file(file_path: &str) -> String {
     fs::read_to_string(file_path).expect(&format!("Error: failed to read file: \"{}\"", file_path))
   }
@@ -14,7 +10,7 @@ impl FileSystem {
     // ensure the directory
     let mut dir: Vec<&str> = path.split("/").collect::<Vec<&str>>();
     dir.pop();
-    FileSystem::ensure_dir(&dir.join("/"));
+    super::file_system::ensure_dir(&dir.join("/"));
     // write the file
     let error_message: &str = &format!("Error: failed to write to \"{}\"", &path);
     let mut file: File = File::create(path).expect(error_message);
@@ -25,8 +21,8 @@ impl FileSystem {
   pub fn copy_file(from: &str, to: &str, overwrite: bool) {
     let mut to_path: Vec<&str> = to.split("/").collect::<Vec<&str>>();
     to_path.pop();
-    FileSystem::ensure_dir(&to_path.join("/"));
-    if overwrite == true || !FileSystem::exists(to) {
+    super::file_system::ensure_dir(&to_path.join("/"));
+    if overwrite == true || !super::file_system::exists(to) {
       match fs::copy(from, to) {
         Ok(_) => {},
         Err(error) => panic!("Error: failed copy of \"{}\" to \"{}\"\n\n{}", from, to, error)
@@ -35,7 +31,7 @@ impl FileSystem {
   }
 
   pub fn empty_dir(dir_path: &str) {
-    if FileSystem::exists(dir_path) {
+    if super::file_system::exists(dir_path) {
       fs::remove_dir_all(dir_path).expect(&format!("Failed to delete dir \"{}\"", dir_path));
       fs::create_dir(dir_path).expect(&format!("Failed to create dir \"{}\"", dir_path));
     }
@@ -43,7 +39,7 @@ impl FileSystem {
 
   // https://doc.rust-lang.org/std/fs/fn.create_dir_all.html
   pub fn ensure_dir(path: &str) {
-    if !FileSystem::exists(path) {
+    if !super::file_system::exists(path) {
       match fs::create_dir_all(path) {
         Ok(_) => {},
         Err(error) => panic!("Error: failed to create directory \"{}\"\n\n{}", path, error)
@@ -57,9 +53,9 @@ impl FileSystem {
   }
 }
 
-pub struct Str { }
+pub mod string {
+  use regex::Regex;
 
-impl Str {
   pub fn to_slug(value: &String) -> String {
     let mut result: String = value.to_lowercase();
     let non_alpha_numeric: Regex = Regex::new(r"[^a-zA-Z0-9]+").unwrap();
@@ -74,9 +70,9 @@ impl Str {
   }
 }
 
-pub struct Walk { }
+pub mod walk {
+  use glob::glob;
 
-impl Walk {
   pub fn dir(dir_path: &str) -> Vec<String> {
     let error: &str = &format!("Error: failed to glob \"{}\"", dir_path);
     glob(dir_path)
