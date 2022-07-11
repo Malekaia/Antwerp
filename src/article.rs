@@ -1,4 +1,4 @@
-use crate::lib::{Str, Walk, FileSystem};
+use crate::lib::{file_system, string, walk};
 use regex::Regex;
 use serde::Serialize;
 use titlecase::titlecase;
@@ -65,7 +65,7 @@ impl Article {
 
   fn generate_properties(file_path: &String) -> Article {
     // get the file content and create the article object
-    let file_content: String = FileSystem::read_file(&file_path);
+    let file_content: String = file_system::read_file(&file_path);
     let mut content: String = file_content.clone();
     let mut article: Article = Article::new();
     // extract static data
@@ -93,7 +93,7 @@ impl Article {
       }
     }
     // dynamic article properties
-    article.slug = Str::to_slug(&article.title);
+    article.slug = string::to_slug(&article.title);
     article.artwork_credit = titlecase(&article.image[0..article.image.find(":").unwrap()].replace("-", " "));
     article.template_path = format!("./{}", &file_path);
     article.render_path = format!("./dist/articles/{}/{}.html", &article.category, &article.slug);
@@ -116,14 +116,14 @@ impl Article {
     let re_toc_addition: Regex = Regex::new(r"<h(3|5) ").unwrap();
     for capture in re_toc.captures_iter(&file_content) {
       let header: String = re_toc_end.replace_all(&capture[4], "").to_string();
-      let id_slug: String = Str::to_slug(&header);
+      let id_slug: String = string::to_slug(&header);
       let html_header: String = re_toc_addition.replace(&capture[0], &format!("<h$1 id=\"{}\" ", &id_slug)).to_string();
       content = content.replace(&capture[0], &html_header);
       table_of_contents.push_str(&format!("<a href=\"#{}\" level=\"{}\">{}</a>", &id_slug, &capture[1], &header));
     }
     article.table_of_contents = format!("<div class=\"table-of-contents\">{}</div>", &table_of_contents);
 
-    // generate article metadata
+    // generated metadata
     article.metadata = format!("
         <meta name=\"keywords\" content=\"{keywords}\" />
         <meta name=\"category\" content=\"{category}\" />
@@ -146,8 +146,9 @@ impl Article {
         <link rel=\"self\" type=\"application/atom+xml\" href=\"{url}\" />
         <link rel=\"canonical\" href=\"{url}\" />
       ",
-      title = &Str::escape_html_quotes(&article.title),
-      description = &Str::escape_html_quotes(&article.description),
+      // format variables
+      title = &string::escape_html_quotes(&article.title),
+      description = &string::escape_html_quotes(&article.description),
       category = &article.category,
       subcategory = &article.subcategory,
       genre = &article.genre,
@@ -155,6 +156,7 @@ impl Article {
       published = &article.published,
       image = &article.image,
       url = &article.url
+    // minify
     ).replace("\n        ", "");
 
     // assign the article's content
@@ -163,7 +165,7 @@ impl Article {
   }
 
   pub fn list() -> Vec<Article> {
-    Walk::dir("./public/articles/*/*.tera")
+    walk::dir("./public/articles/*/*.tera")
          .iter()
          .map(| path: &String | Article::generate_properties(&path))
          .collect::<Vec<Article>>()
