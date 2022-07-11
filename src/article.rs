@@ -68,6 +68,7 @@ impl Article {
     let file_content: String = file_system::read_file(&file_path);
     let mut content: String = file_content.clone();
     let mut article: Article = Article::new();
+
     // extract static data
     let re_define: Regex = Regex::new(r"<!-- define (.*?): (.*?) -->\n").unwrap();
     for capture in re_define.captures_iter(&file_content) {
@@ -92,6 +93,7 @@ impl Article {
         }
       }
     }
+
     // dynamic article properties
     article.slug = string::to_slug(&article.title);
     article.artwork_credit = titlecase(&article.image[0..article.image.find(":").unwrap()].replace("-", " "));
@@ -109,6 +111,7 @@ impl Article {
       // Unicode Character “𝑥” (https://www.compart.com/en/unicode/U+1D465)
       "&#119909; minute read".to_string()
     };
+
     // generate the table of contents
     let mut table_of_contents: String = String::new();
     let re_toc: Regex = Regex::new("<h(3|5)(.*?c)lass=[\"\']text-title[\"\'](.*?>|>)(.*?)</h(3|5)>").unwrap();
@@ -159,7 +162,7 @@ impl Article {
     // minify
     ).replace("\n        ", "");
 
-    // assign the article's content
+    // assign the article content
     article.content = content;
     article
   }
