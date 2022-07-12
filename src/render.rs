@@ -1,15 +1,28 @@
 use crate::lib::{file_system, walk};
+use colored::Colorize;
 use grass;
 use regex::Regex;
 use tera::{Context, Tera};
+
+fn print(color: &str, action: &str, category: &str, target: &str) {
+  let colourised = match color {
+    "red" => format!("{}", &action).red(),
+    "blue" => format!("{}", &action).blue(),
+    "yellow" => format!("{}", &action).yellow(),
+    "green" => format!("{}", &action).green(),
+    "magenta" => format!("{}", &action).magenta(),
+    _ => format!("{}", &action).bold()
+  };
+  println!("{} ({}): {}", colourised.bold(), format!("{category}").bold(), target);
+}
 
 pub struct CopyDetails<'a> (pub &'a str, pub &'a str, pub bool);
 
 pub struct Render<'a> {
   pub verbose: bool,
-  pub empty_dist: bool,
   pub tera: Tera,
   pub empty_context: Context,
+  pub dist_root: &'a str,
   pub copy_dirs: Vec<CopyDetails<'a>>,
   pub copy_files: Vec<CopyDetails<'a>>,
   pub assets_301: Vec<[&'a str; 2]>,
@@ -19,6 +32,7 @@ pub struct Render<'a> {
 
 impl Render<'_> {
   fn copy_dirs(&self) {
+    let re_root: Regex = Regex::new(r"^(.*?)/(.*?)$").unwrap();
     for copy_config in &self.copy_dirs {
       let source: &str = copy_config.0;
       let check: &str = copy_config.1;
@@ -28,11 +42,14 @@ impl Render<'_> {
         if !re_check.is_match(&path) {
           continue;
         }
+        if self.dist_root.ends_with("/") {
+          panic!("Error: root path ({}) cannot end with \"/\"", self.dist_root);
+        }
+        let destination: String = re_root.replace(path.clone().as_str(), format!("{}/$2", self.dist_root)).to_string();
         if self.verbose == true {
           let overwrite_status: &str = if overwrite == true { "overwrite" } else { "no overwrite" };
-          println!("Copy ({}): {}", overwrite_status, &path);
+          print("blue", "Copy", overwrite_status, &destination);
         }
-        let destination: String = path.clone().replace("public/", "dist/");
         file_system::copy_file(&path, &destination, overwrite);
       }
     }
@@ -45,7 +62,7 @@ impl Render<'_> {
       let overwrite: bool = copy_config.2;
       if self.verbose == true {
         let overwrite_status: &str = if overwrite == true { "overwrite" } else { "no overwrite" };
-        println!("Copy ({}): {}", overwrite_status, &source);
+        print("blue", "Copy", overwrite_status, &destination);
       }
       file_system::copy_file(&source, &destination, overwrite);
     }
@@ -63,13 +80,11 @@ impl Render<'_> {
     }
   }
 
-  pub fn empty_dist(&self) {
-    if self.empty_dist == true {
-      if self.verbose == true {
-        println!("Delete: ./dist");
-      }
-      file_system::empty_dir("./dist/");
+  pub fn empty_root(&self) {
+    if self.verbose == true {
+      print("red", "Empty", "folder", self.dist_root);
     }
+    file_system::empty_dir(self.dist_root);
   }
 
   pub fn copy_static(&self) {
@@ -84,7 +99,7 @@ impl Render<'_> {
         Err(error) => panic!("Error: failed to compile SASS stylesheets\n\n{:?}", error)
       };
       if self.verbose == true {
-        println!("Compile (SCSS): {}", &destination);
+        print("magenta", "Compile", "SCSS", &destination);
       }
       file_system::write_file(&destination, &result);
     }
@@ -99,11 +114,24 @@ impl Render<'_> {
     tera
   }
 
-  pub fn template(&self, name: &str, destination: &str, context: &Context) {
-    if self.verbose == true {
-      println!("Render (route): {}", &destination);
+  pub fn assets_301(&self, template: &str) {
+    let mut context_301: Context = Context::new();
+    for [url, redirect] in &self.assets_301 {
+      if self.verbose == true {
+        print("yellow", "Render", &format!("HTTP: {}", &template.replace(".tera", "")), &url);
+      }
+      context_301.insert("redirect", redirect);
+      self.template_to_file(template, url, &context_301);
     }
-    self.template_to_file(name, destination, context);
+  }
+
+  pub fn assets_410(&self, template: &str) {
+    for url in &self.assets_410 {
+      if self.verbose == true {
+        print("yellow", "Render", &format!("HTTP: {}", &template.replace(".tera", "")), &url);
+      }
+      self.template_to_file(template, url, &self.empty_context);
+    }
   }
 
   pub fn template_string(&mut self, input: &String, context: &Context) -> String {
@@ -113,23 +141,10 @@ impl Render<'_> {
     }
   }
 
-  pub fn assets_301(&self, template: &str) {
-    let mut context_301: Context = Context::new();
-    for [url, redirect] in &self.assets_301 {
-      if self.verbose == true {
-        println!("Render (301): {}", &template);
-      }
-      context_301.insert("redirect", redirect);
-      self.template_to_file(&template, url, &context_301);
+  pub fn template(&self, name: &str, destination: &str, context: &Context) {
+    if self.verbose == true {
+      print("green", "Render", "static", &destination);
     }
-  }
-
-  pub fn assets_410(&self, template: &str) {
-    for url in &self.assets_410 {
-      if self.verbose == true {
-        println!("Render (410): {}", url);
-      }
-      self.template_to_file(template, url, &self.empty_context);
-    }
+    self.template_to_file(name, destination, context);
   }
 }
