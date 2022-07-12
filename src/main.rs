@@ -32,14 +32,14 @@ impl ArticleSort for Article {
 fn main() {
   let mut render: Render = Render {
     verbose: true,
-    empty_dist: true,
     tera: Render::tera_instance("public/**/*.tera"),
     empty_context: Context::new(),
+    dist_root: "./dist",
     copy_dirs: vec![
       CopyDetails("./public/images/**/*", r"\.(png|jpg)$", false),
       CopyDetails("./public/scripts/vendor/*.js", r"\.js$", false),
       CopyDetails("./public/scripts/*.js", r"\.js$", true),
-      CopyDetails("./public/styles/vendor/**/*", r"\.(css|woff|woff2)$", true)
+      CopyDetails("./public/styles/vendor/**/*", r"\.(css|woff|woff2)$", false)
     ],
     copy_files: vec![
       CopyDetails("./public/sitemap.xml", "./dist/sitemap.xml", false)
@@ -72,7 +72,7 @@ fn main() {
     ]
   };
 
-  render.empty_dist();
+  render.empty_root();
   render.copy_static();
   render.compile_scss();
   render.assets_301("301.tera");
@@ -80,7 +80,7 @@ fn main() {
   render.template("404.tera", "./dist/404.html", &render.empty_context);
 
   // create the article list
-  let article_list: Vec<Article> = Article::sort_list(Article::list());
+  let article_list: Vec<Article> = Article::sort_list(Article::list(render.dist_root));
 
   // render article index
   render.template("articles/index.tera", "./dist/articles/index.html", &render.empty_context);
