@@ -63,7 +63,7 @@ impl Article {
     }
   }
 
-  fn generate_properties(file_path: &String) -> Article {
+  fn generate_properties(file_path: &String, dist_root: &str) -> Article {
     // get the file content and create the article object
     let file_content: String = file_system::read_file(&file_path);
     let mut content: String = file_content.clone();
@@ -98,7 +98,7 @@ impl Article {
     article.slug = string::to_slug(&article.title);
     article.artwork_credit = titlecase(&article.image[0..article.image.find(":").unwrap()].replace("-", " "));
     article.template_path = format!("./{}", &file_path);
-    article.render_path = format!("./dist/articles/{}/{}.html", &article.category, &article.slug);
+    article.render_path = format!("{}/articles/{}/{}.html", &dist_root, &article.category, &article.slug);
     article.url = format!("https://logicalbranch.github.io/articles/{}/{}.html", &article.category, &article.slug);
 
     // generate the article's estimated read time
@@ -167,10 +167,13 @@ impl Article {
     article
   }
 
-  pub fn list() -> Vec<Article> {
+  pub fn list(dist_root: &str) -> Vec<Article> {
+    if dist_root.ends_with("/") {
+      panic!("Error: \"dist_root\" cannot end with \"/\"");
+    }
     walk::dir("./public/articles/*/*.tera")
          .iter()
-         .map(| path: &String | Article::generate_properties(&path))
+         .map(| file_path: &String | Article::generate_properties(&file_path, dist_root))
          .collect::<Vec<Article>>()
   }
 }
