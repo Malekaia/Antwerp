@@ -2,6 +2,7 @@
 name = "antwerp"
 version = "0.1.0"
 edition = "2021"
+description = "Build program for logicalbranch.github.io ported from Node.js and Pug"
 
 [profile.dev]
 opt-level = 1
