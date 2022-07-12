@@ -7,9 +7,9 @@ This program takes given resources and copies (static files), compiles (SCSS sty
 
 It was ported from Node.js & Pug to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) to improve the performance and speed of the program. Resulting in an (optimised) binary where the real (total elapsed) build time is (on average) 97.50% faster than its Node.js counterpart, a decrease in (average) build speed from 2.8 seconds to 0.07 seconds.
 
-## To do:
-* Move render single calls to init method
-* Use "Render::defaults()" with "Render"
+## Todo:
+* Move optional `render` instance methods to `init` method
+* Create `Render::defaults()` and `Render::new()`
 * Add option to generate new projects:
   * Generate directory structure
   * Generate associated files and source code
