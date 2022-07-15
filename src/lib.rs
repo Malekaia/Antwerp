@@ -5,24 +5,22 @@ pub mod file_system {
     fs::read_to_string(file_path).expect(&format!("Error: failed to read file: \"{}\"", file_path))
   }
 
-  // https://doc.rust-lang.org/std/fs/struct.File.html
   pub fn write_file(path: &str, content: &String) {
     // ensure the directory
     let mut dir: Vec<&str> = path.split("/").collect::<Vec<&str>>();
     dir.pop();
-    super::file_system::ensure_dir(&dir.join("/"));
+    self::ensure_dir(&dir.join("/"));
     // write the file
     let error_message: &str = &format!("Error: failed to write to \"{}\"", &path);
     let mut file: File = File::create(path).expect(error_message);
     file.write_all(content.as_bytes()).expect(error_message);
   }
 
-  // https://doc.rust-lang.org/std/fs/fn.copy.html
   pub fn copy_file(from: &str, to: &str, overwrite: bool) {
     let mut to_path: Vec<&str> = to.split("/").collect::<Vec<&str>>();
     to_path.pop();
-    super::file_system::ensure_dir(&to_path.join("/"));
-    if overwrite == true || !super::file_system::exists(to) {
+    self::ensure_dir(&to_path.join("/"));
+    if overwrite == true || !self::exists(to) {
       match fs::copy(from, to) {
         Ok(_) => {},
         Err(error) => panic!("Error: failed copy of \"{}\" to \"{}\"\n\n{}", from, to, error)
@@ -31,15 +29,14 @@ pub mod file_system {
   }
 
   pub fn empty_dir(dir_path: &str) {
-    if super::file_system::exists(dir_path) {
+    if self::exists(dir_path) {
       fs::remove_dir_all(dir_path).expect(&format!("Failed to delete dir \"{}\"", dir_path));
       fs::create_dir(dir_path).expect(&format!("Failed to create dir \"{}\"", dir_path));
     }
   }
 
-  // https://doc.rust-lang.org/std/fs/fn.create_dir_all.html
   pub fn ensure_dir(path: &str) {
-    if !super::file_system::exists(path) {
+    if !self::exists(path) {
       match fs::create_dir_all(path) {
         Ok(_) => {},
         Err(error) => panic!("Error: failed to create directory \"{}\"\n\n{}", path, error)
@@ -47,7 +44,6 @@ pub mod file_system {
     }
   }
 
-  // https://stackoverflow.com/a/32384768/10415695
   pub fn exists(path: &str) -> bool {
     Path::new(path).exists()
   }
