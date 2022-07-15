@@ -1,9 +1,9 @@
+mod core;
 mod article;
 mod lib;
-mod render;
-use crate::article::{Article, ArticleSort};
-use crate::render::{Render, CopyDetails};
-use tera::Context;
+use crate::core::{Antwerp, Antwerp::Template, Antwerp::Asset};
+use article::{Article, ArticleSort};
+use tera::{Context, Tera};
 
 impl ArticleSort for Article {
   fn sort_list(article_list: Vec<Article>) -> Vec<Article> {
@@ -19,7 +19,6 @@ impl ArticleSort for Article {
         unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, article.template_path)
       }
     }
-
     // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
     for genre in &mut articles {
       genre.sort_by_key(| article | article.content.len());
@@ -30,79 +29,88 @@ impl ArticleSort for Article {
 }
 
 fn main() {
-  let mut render: Render = Render {
-    verbose: true,
-    tera: Render::tera_instance("public/**/*.tera"),
-    empty_context: Context::new(),
-    dist_root: "./dist",
-    copy_dirs: vec![
-      CopyDetails("./public/images/**/*", r"\.(png|jpg)$", false),
-      CopyDetails("./public/scripts/vendor/*.js", r"\.js$", false),
-      CopyDetails("./public/scripts/*.js", r"\.js$", true),
-      CopyDetails("./public/styles/vendor/**/*", r"\.(css|woff|woff2)$", false)
-    ],
-    copy_files: vec![
-      CopyDetails("./public/sitemap.xml", "./dist/sitemap.xml", false)
-    ],
-    assets_301: vec![
-      ["./dist/articles/Bootstrap/how_to_change_the_default_font_in_bootstrap/index.html", "/articles/CSS/how-to-change-the-default-font-in-bootstrap.html"],
-      ["./dist/articles/Git/how_to_avoid_overusing_the_git_keyword/index.html", "/articles/Git/how-to-avoid-retyping-the-git-keyword.html"],
-      ["./dist/articles/Go/globbing_in_go/index.html", "/articles/Go Lang/globbing-in-go.html"],
-      ["./dist/articles/HTML/how_to_open_html_links_in_new_tabs/index.html", "/articles/HTML/how-to-open-html-links-in-new-tabs.html"],
-      ["./dist/articles/Node.js/environment_detection_in_javascript/index.html", "/articles/JavaScript/environment-detection-in-javascript.html"],
-      ["./dist/articles/Perl/how_to_unzip_an_archive_using_perl/index.html", "/articles/Perl/how-to-call-a-subprocess-in-perl.html"],
-      ["./dist/articles/Pip/an_introduction_to_the_pip_package_manager/index.html", "/articles/Python/an-introduction-to-the-pip-package-manager.html"],
-      ["./dist/articles/SASS/how_to_extend_parent_selectors_in_sass/index.html", "/articles/CSS/how-to-extend-parent-selectors-in-sass.html"],
-      ["./dist/articles/Web_Development/how_to_create_a_development_server_using_http_server/index.html", "/articles/Python/how-to-create-a-development-server-using-http-server.html"]
-    ],
-    assets_410: vec![
-      "./dist/about/index.html",
-      "./dist/contact/index.html",
-      "./dist/img/index.html",
-      "./dist/info/index.html",
-      "./dist/articles/jQuery/how_to_modify_the_jquery_global_without_modifying_jquery/index.html",
-      "./dist/articles/jQuery/how_to_scroll_to_an_element_on_click/index.html",
-      "./dist/articles/Node.js/brace_expansion_in_shelljs/index.html",
-      "./dist/articles/Web_Development/how_to_setup_a_development_server_using_express/index.html",
-      "./dist/articles/Web_Development/how_to_setup_a_development_server_using_flask/index.html"
-    ],
-    scss_assets: vec![
-      ["./public/styles/app.scss", "./dist/styles/app.css"],
-      ["./public/styles/http.scss", "./dist/styles/http.css"]
-    ]
-  };
+  Antwerp::empty_root("./dist/");
 
-  render.empty_root();
-  render.copy_static();
-  render.compile_scss();
-  render.assets_301("301.tera");
-  render.assets_410("410.tera");
-  render.template("404.tera", "./dist/404.html", &render.empty_context);
+  let mut tera: Tera = Antwerp::tera("public/**/*.tera");
+  let article_list: Vec<Article> = Article::sort_list(Article::list("./dist"));
 
-  // create the article list
-  let article_list: Vec<Article> = Article::sort_list(Article::list(render.dist_root));
+  Antwerp::assets(vec![
+    Asset::Folder("./public/images/**/*", "./dist", r"\.(png|jpg)$", false),
+    Asset::Folder("./public/scripts/vendor/*.js", "./dist", r"\.js$", false),
+    Asset::Folder("./public/scripts/*.js", "./dist", r"\.js$", true),
+    Asset::Folder("./public/styles/vendor/**/*", "./dist", r"\.(css|woff|woff2)$", false),
+    Asset::File("./public/sitemap.xml", "./dist/sitemap.xml", false),
+    Asset::Scss("./public/styles/app.scss", "./dist/styles/app.css"),
+    Asset::Scss("./public/styles/http.scss", "./dist/styles/http.css"),
+  ]);
 
-  // render article index
-  render.template("articles/index.tera", "./dist/articles/index.html", &render.empty_context);
-
-  // render the index
-  let mut index_context: Context = Context::new();
-  index_context.insert("articles", &article_list);
-  index_context.insert("page_name", "index");
-  index_context.insert("image", "manuel-cosentino:n--CMLApjfI-unsplash.jpg");
-  index_context.insert("artwork_credit", "Manuel Cosentino");
-  render.template("index.tera", "./dist/index.html", &index_context);
-
-  // render articles
-  let mut article_context: Context = Context::new();
-  article_context.insert("articles", &article_list);
-  for mut article in article_list {
-    article.content = render.template_string(&article.content, &article_context);
-    article_context.insert("content", &article.content);
-    article_context.insert("article", &article);
-    article_context.insert("page_name", "article");
-    article_context.insert("artwork_credit", &article.artwork_credit);
-    article_context.insert("image", &article.image);
-    render.template("articles/article.tera", &article.render_path, &article_context);
+  fn context_301(redirect: &str) -> Context {
+    let mut context: Context = Context::new();
+    context.insert("redirect", redirect);
+    context
   }
+
+  Antwerp::route_group(&tera,"301.tera", vec![
+    Template { output: "./dist/articles/Bootstrap/how_to_change_the_default_font_in_bootstrap/index.html", context: context_301("/articles/CSS/how-to-change-the-default-font-in-bootstrap.html") },
+    Template { output: "./dist/articles/Git/how_to_avoid_overusing_the_git_keyword/index.html", context: context_301("/articles/Git/how-to-avoid-retyping-the-git-keyword.html") },
+    Template { output: "./dist/articles/Go/globbing_in_go/index.html", context: context_301("/articles/Go Lang/globbing-in-go.html") },
+    Template { output: "./dist/articles/HTML/how_to_open_html_links_in_new_tabs/index.html", context: context_301("/articles/HTML/how-to-open-html-links-in-new-tabs.html") },
+    Template { output: "./dist/articles/Node.js/environment_detection_in_javascript/index.html", context: context_301("/articles/JavaScript/environment-detection-in-javascript.html") },
+    Template { output: "./dist/articles/Perl/how_to_unzip_an_archive_using_perl/index.html", context: context_301("/articles/Perl/how-to-call-a-subprocess-in-perl.html") },
+    Template { output: "./dist/articles/Pip/an_introduction_to_the_pip_package_manager/index.html", context: context_301("/articles/Python/an-introduction-to-the-pip-package-manager.html") },
+    Template { output: "./dist/articles/SASS/how_to_extend_parent_selectors_in_sass/index.html", context: context_301("/articles/CSS/how-to-extend-parent-selectors-in-sass.html") },
+    Template { output: "./dist/articles/Web_Development/how_to_create_a_development_server_using_http_server/index.html", context: context_301("/articles/Python/how-to-create-a-development-server-using-http-server.html") }
+  ]);
+
+  Antwerp::route_group(&tera,"410.tera", vec![
+    Template { output: "./dist/about/index.html", context: Context::new() },
+    Template { output: "./dist/contact/index.html", context: Context::new() },
+    Template { output: "./dist/img/index.html", context: Context::new() },
+    Template { output: "./dist/info/index.html", context: Context::new() },
+    Template { output: "./dist/articles/jQuery/how_to_modify_the_jquery_global_without_modifying_jquery/index.html", context: Context::new() },
+    Template { output: "./dist/articles/jQuery/how_to_scroll_to_an_element_on_click/index.html", context: Context::new() },
+    Template { output: "./dist/articles/Node.js/brace_expansion_in_shelljs/index.html", context: Context::new() },
+    Template { output: "./dist/articles/Web_Development/how_to_setup_a_development_server_using_express/index.html", context: Context::new() },
+    Template { output: "./dist/articles/Web_Development/how_to_setup_a_development_server_using_flask/index.html", context: Context::new() },
+  ]);
+
+  Antwerp::route(&tera, "404.tera", "./dist/404.html", Context::new());
+
+  Antwerp::route(&tera, "index.tera", "./dist/index.html", {
+    let mut context: Context = Context::new();
+    context.insert("articles", &article_list);
+    context.insert("page_name", "index");
+    context.insert("image", "manuel-cosentino:n--CMLApjfI-unsplash.jpg");
+    context.insert("artwork_credit", "Manuel Cosentino");
+    context
+  });
+
+  Antwerp::route(&tera, "articles/index.tera", "./dist/articles/index.html", {
+    let mut context: Context = Context::new();
+    context.insert("articles", &article_list);
+    context.insert("page_name", "index");
+    context.insert("image", "manuel-cosentino:n--CMLApjfI-unsplash.jpg");
+    context.insert("artwork_credit", "Manuel Cosentino");
+    context
+  });
+
+  let mut template_group: Vec<Template> = vec![];
+  for article in &article_list {
+    template_group.push(Template {
+      output: &article.render_path,
+      context: {
+        let mut context: Context = Context::new();
+        context.insert("articles", &article_list);
+        let content: String = Antwerp::render_string(&mut tera,&article.content, Context::new());
+        context.insert("content", &content);
+        context.insert("article", &article);
+        context.insert("page_name", &"article");
+        context.insert("artwork_credit", &article.artwork_credit);
+        context.insert("image", &article.image);
+        context
+      }
+    });
+  }
+
+  Antwerp::route_group(&tera,"articles/article.tera", template_group);
 }
