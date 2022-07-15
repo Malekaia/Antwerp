@@ -3,10 +3,6 @@ use regex::Regex;
 use serde::Serialize;
 use titlecase::titlecase;
 
-pub trait ArticleSort {
-  fn sort_list(article_list: Vec<Article>) -> Vec<Article>;
-}
-
 #[derive(Serialize)]
 pub struct Article {
   // static data

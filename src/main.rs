@@ -2,11 +2,13 @@ mod core;
 mod article;
 mod lib;
 use crate::core::{Antwerp, Antwerp::Template, Antwerp::Asset};
-use article::{Article, ArticleSort};
+use article::Article;
 use tera::{Context, Tera};
 
-impl ArticleSort for Article {
-  fn sort_list(article_list: Vec<Article>) -> Vec<Article> {
+fn main() {
+  Antwerp::empty_root("./dist/");
+
+  fn sort_article_list(article_list: Vec<Article>) -> Vec<Article> {
     // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
     let mut articles: Vec<Vec<Article>> = vec![vec![], vec![], vec![], vec![], vec![]];
     for article in article_list {
@@ -26,13 +28,9 @@ impl ArticleSort for Article {
     }
     articles.into_iter().flatten().collect::<Vec<Article>>()
   }
-}
-
-fn main() {
-  Antwerp::empty_root("./dist/");
 
   let mut tera: Tera = Antwerp::tera("public/**/*.tera");
-  let article_list: Vec<Article> = Article::sort_list(Article::list("./dist"));
+  let article_list: Vec<Article> = sort_article_list(Article::list("./dist"));
 
   Antwerp::assets(vec![
     Asset::Folder("./public/images/**/*", "./dist", r"\.(png|jpg)$", false),
