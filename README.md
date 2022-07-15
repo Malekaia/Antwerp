@@ -23,12 +23,10 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
     - [ ] Generate directory structure
     - [ ] Generate sample files and source code
 
-## References:
+## Notes:
+  * Scopes for `print` calls in `core.rs` are placeholders
+
+## Useful links:
  * https://programming-idioms.org/cheatsheet/Rust
  * https://github.com/connorskees/grass/issues/19
- * https://doc.rust-lang.org/std/fs/struct.File.html
- * https://doc.rust-lang.org/std/fs/fn.copy.html
- * https://doc.rust-lang.org/std/fs/fn.create_dir_all.html
- * https://stackoverflow.com/a/32384768/10415695
  * https://stackoverflow.com/a/29008355/10415695
- * https://sass-lang.com/guide#topic-1
