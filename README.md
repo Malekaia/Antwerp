@@ -28,7 +28,7 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
     - [ ] Generate sample files and source code
 
 ## Notes:
-  * Scopes for `print` calls in `core.rs` are placeholders
+  * ~~Scopes for `print` calls in `core.rs` are placeholders~~
 
 ## Useful links:
  * https://programming-idioms.org/cheatsheet/Rust
