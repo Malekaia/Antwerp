@@ -1,10 +1,18 @@
 //! Contains functions used to standardise the implementation of common utilities.
 //!
 //! Provides detailed error handling and prevents code duplication.
-
+use colored::Colorize;
 use glob::{glob, GlobError};
 use regex::Regex;
 use std::{fs, fs::File, path::Path, io::prelude::Write, path::PathBuf};
+
+
+/// **Description**:
+///
+/// Log a colourised string about a certain action
+pub fn print(color: &str, action: &str, category: &str, target: &str) {
+  println!("{} ({}): {}", format!("{action}").color(color), format!("{category}").bold(), target);
+}
 
 
 /// **Description**:
@@ -47,7 +55,7 @@ pub fn read_file(file_path: &str) -> String {
 /// * [io::Write](https://doc.rust-lang.org/std/io/trait.Write.html#method.write_all)
 pub fn write_file(path: &str, content: &String) {
   // Ensure the file's directory exists
-  self::ensure_dir(&path[0..path.rfind('/').unwrap()]);
+  ensure_dir(&path[0..path.rfind('/').unwrap()]);
   // Create the write error message
   let write_error: &str = &format!("Error: failed to write file \"{}\"", &path);
   // Opens the file in write-only mode
@@ -71,9 +79,9 @@ pub fn write_file(path: &str, content: &String) {
 /// * [fs::copy](https://doc.rust-lang.org/std/fs/fn.copy.html)
 pub fn copy_file(from: &str, to: &str, overwrite: bool) {
   // Ensure the directory of the copy destination exists
-  self::ensure_dir(&to[0..to.rfind('/').unwrap()]);
+  ensure_dir(&to[0..to.rfind('/').unwrap()]);
   // Write to the file if it doesn't exist or if overwrite is enabled
-  if !self::exists(to) || overwrite == true {
+  if !exists(to) || overwrite == true {
     match fs::copy(from, to) {
       Ok(_) => { /* do nothing on success */ },
       Err(error) => panic!("Error: failed copy of \"{}\" to \"{}\"\n\n{}", from, to, error)
@@ -90,7 +98,7 @@ pub fn copy_file(from: &str, to: &str, overwrite: bool) {
 /// * [Path::new(...).exists()](https://doc.rust-lang.org/stable/std/path/struct.Path.html#method.exists)
 /// * [fs::create_dir](https://doc.rust-lang.org/std/fs/fn.create_dir.html)
 pub fn ensure_dir(path: &str) {
-  if !self::exists(path) {
+  if !exists(path) {
     match fs::create_dir_all(path) {
       Ok(_) => {},
       Err(error) => panic!("Error: failed to create directory \"{}\"\n\n{}", path, error)
@@ -119,7 +127,7 @@ pub fn ensure_dir(path: &str) {
 /// * [Path::new(...).exists()](https://doc.rust-lang.org/stable/std/path/struct.Path.html#method.exists)
 pub fn empty_dir(dir_path: &str) {
   let empty_error: &str = &*format!("Failed to empty dir \"{}\"", dir_path);
-  if !self::exists(dir_path) {
+  if !exists(dir_path) {
     fs::create_dir(dir_path).expect(empty_error);
   } else {
     fs::remove_dir_all(dir_path).expect(empty_error);
@@ -215,7 +223,7 @@ static HTML_ESCAPABLE: [[&str; 2]; 31] = [
 pub fn escape_html(html: &String) -> String {
   // Replace the characters with their matching HTML entities
   let mut result: String = html.to_owned();
-  for [character, replacement] in self::HTML_ESCAPABLE {
+  for [character, replacement] in HTML_ESCAPABLE {
     result = result.replace(character, replacement);
   }
   result

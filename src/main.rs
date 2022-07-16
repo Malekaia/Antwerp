@@ -1,36 +1,43 @@
-mod core;
-mod article;
-mod lib;
-use crate::core::{Antwerp, Antwerp::Template, Antwerp::Asset};
-use article::Article;
+// use crate::core::{Antwerp, Antwerp::Template, Antwerp::Asset};
+// use crate::posts::{Posts, Posts::Post};
+mod antwerp;
 use tera::{Context, Tera};
+use antwerp::{Antwerp, Template, PostsConfig, Asset, Post};
+
+fn sort_post_list(article_list: Vec<Post>) -> Vec<Post> {
+  // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
+  let mut post_list: Vec<Vec<Post>> = vec![vec![], vec![], vec![], vec![], vec![]];
+  for article in article_list {
+    match &*article.genre {
+      "Tutorial" => post_list[0].push(article),
+      "Project" => post_list[1].push(article),
+      "Opinion" => post_list[2].push(article),
+      "Misc" => post_list[3].push(article),
+      "Guide" => post_list[4].push(article),
+      unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, article.template_path)
+    }
+  }
+  // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
+  for genre in &mut post_list {
+    genre.sort_by_key(| article | article.content.len());
+    genre.reverse();
+  }
+  post_list.into_iter().flatten().collect::<Vec<Post>>()
+}
 
 fn main() {
-  Antwerp::empty_root("./dist/");
-
-  fn sort_article_list(article_list: Vec<Article>) -> Vec<Article> {
-    // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
-    let mut articles: Vec<Vec<Article>> = vec![vec![], vec![], vec![], vec![], vec![]];
-    for article in article_list {
-      match &*article.genre {
-        "Tutorial" => articles[0].push(article),
-        "Project" => articles[1].push(article),
-        "Opinion" => articles[2].push(article),
-        "Misc" => articles[3].push(article),
-        "Guide" => articles[4].push(article),
-        unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, article.template_path)
-      }
-    }
-    // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
-    for genre in &mut articles {
-      genre.sort_by_key(| article | article.content.len());
-      genre.reverse();
-    }
-    articles.into_iter().flatten().collect::<Vec<Article>>()
-  }
+  let config: PostsConfig = PostsConfig {
+    uri: "https://logicalbranch.github.io",
+    uri_post: "%uri/articles/%category/%slug.html",
+    dir_dist: "./dist",
+    dir_templates: "./public/articles/*/*.tera",
+    path_render: "%dir_dist/articles/%category/%slug.html"
+  };
 
   let mut tera: Tera = Antwerp::tera("public/**/*.tera");
-  let article_list: Vec<Article> = sort_article_list(Article::list("./public/articles/*/*.tera","./dist", "https://logicalbranch.github.io"));
+  let article_list: Vec<Post> = sort_post_list(Post::list(&config));
+
+  Antwerp::empty_root("./dist/");
 
   Antwerp::assets(vec![
     Asset::Folder("./public/images/**/*", "./dist", r"\.(png|jpg)$", false),
