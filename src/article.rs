@@ -84,8 +84,7 @@ impl Article {
         "image" => article.image = property_value,
         "author" => article.author = property_value,
         unknown_key @ _ => {
-          let article_info: &str = &file_path.replace("public/articles/", "");
-          panic!("Ignore: define \"{}\" in \"{}\"", unknown_key, article_info);
+          panic!("Ignore: define \"{}\" in \"{}\"", unknown_key, file_path);
         }
       }
     }
@@ -164,9 +163,9 @@ impl Article {
     article
   }
 
-  pub fn list(dist_root: &str, root_url: &str) -> Vec<Article> {
+  pub fn list(path: &str, dist_root: &str, root_url: &str) -> Vec<Article> {
     // Walk the given articles directory
-    lib::walk_dir("./public/articles/*/*.tera")
+    lib::walk_dir(path)
         // Convert into an Iter
         .iter()
         // Generate the properties for each article

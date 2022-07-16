@@ -30,7 +30,7 @@ fn main() {
   }
 
   let mut tera: Tera = Antwerp::tera("public/**/*.tera");
-  let article_list: Vec<Article> = sort_article_list(Article::list("./dist", "https://logicalbranch.github.io"));
+  let article_list: Vec<Article> = sort_article_list(Article::list("./public/articles/*/*.tera","./dist", "https://logicalbranch.github.io"));
 
   Antwerp::assets(vec![
     Asset::Folder("./public/images/**/*", "./dist", r"\.(png|jpg)$", false),
