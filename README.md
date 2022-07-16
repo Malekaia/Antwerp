@@ -10,13 +10,16 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
 ## Todo:
 - [x] Document existing code
 - [x] Remove unnecessary `lib.rs` methods
+- [x] Allow for user defined directory structures
+- [ ] Add (opt-in) support for [SWC](https://swc.rs/)
 - [ ] Standardise and integrate the `Article` module into Antwerp
-- [ ] Enforce use of `public` and `dist` directories
+
+
+## Ideas:
 - [ ] Implement a config file (`Antwerp.toml`)
   - [ ] Only print if `verbose` is enabled
   - [ ] Move `empty_root` to a config file
     - [ ] confirm delete if option is true (?)
-  - [ ] Add (opt-in) support for [Babel](https://babeljs.io/)
 - [ ] Implement CLI interface
   - [ ] Call init methods for config options
   - [ ] Implement a `watch` CLI option (`--watch`)
