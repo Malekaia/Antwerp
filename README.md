@@ -8,9 +8,10 @@ This program takes given resources and copies (static files), compiles (SCSS sty
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.50% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.07 seconds.
 
 ## Todo:
-- [ ] Remove unnecessary `lib.rs` methods
+- [x] Document existing code
+- [x] Remove unnecessary `lib.rs` methods
+- [ ] Standardise and integrate the `Article` module into Antwerp
 - [ ] Enforce use of `public` and `dist` directories
-- [ ] Document existing code
 - [ ] Implement a config file (`Antwerp.toml`)
   - [ ] Only print if `verbose` is enabled
   - [ ] Move `empty_root` to a config file
