@@ -7,12 +7,19 @@ This program takes given resources and copies (static files), compiles (SCSS sty
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.50% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.07 seconds.
 
-## Todo:
+## Changes:
 - [x] Document existing code
 - [x] Remove unnecessary `lib.rs` methods
-- [x] Allow for user defined directory structures
+- [x] Ensure directory structures are user defined
+- [x] Standardise and integrate the `Article` module into Antwerp as module for all post types
+- [x] Modularise code and implement separation of concerns
+- [x] Ensure Tera inheritance chain is only built **once**
+- [x] Ensure Post data is collected and generated **once**
+- [x] Use `Antwerp::Config` to define behavior
+- [x] Remove all uses of `clone()` and reduce use of `to_owned()`
+- [x] Remove mutable static globals
+- [x] Replace all unsafe blocks with safe code
 - [ ] Add (opt-in) support for [SWC](https://swc.rs/)
-- [ ] Standardise and integrate the `Article` module into Antwerp
 
 
 ## Ideas:
