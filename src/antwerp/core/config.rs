@@ -1,5 +1,5 @@
-use tera::Tera;
 use crate::antwerp::{Antwerp, Asset, Post, Route};
+use tera::Tera;
 
 pub struct Config<'a> {
   pub tera: Tera,
