@@ -1,4 +1,4 @@
-use crate::antwerp::{Lib, Config};
+use crate::antwerp::{Config, Lib};
 use tera::{Context, Tera};
 
 /// **Description**:

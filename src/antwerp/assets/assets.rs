@@ -1,5 +1,5 @@
+use crate::antwerp::{Config, Lib};
 use regex::Regex;
-use crate::antwerp::{Lib, Config};
 
 /// **Description**:
 ///

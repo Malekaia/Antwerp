@@ -1,4 +1,4 @@
-use crate::antwerp::{Lib, Antwerp::Config};
+use crate::antwerp::{Config, Lib};
 use regex::Regex;
 use serde::Serialize;
 use titlecase::titlecase;
