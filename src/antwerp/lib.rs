@@ -1,6 +1,4 @@
-//! Contains functions used to standardise the implementation of common utilities.
-//!
-//! Provides detailed error handling and prevents code duplication.
+//! Exposes functions that prevent code duplication - and standardises the implementation of frequently used tools in a fail-safe way, providing detailed error handling if not possible.
 use colored::Colorize;
 use glob::{glob, GlobError};
 use regex::Regex;
@@ -9,9 +7,13 @@ use std::{fs, fs::File, path::Path, io::prelude::Write, path::PathBuf};
 
 /// **Description**:
 ///
-/// Log a colourised string about a certain action
-pub fn print(color: &str, action: &str, category: &str, target: &str) {
-  println!("{} ({}): {}", format!("{action}").color(color), format!("{category}").bold(), target);
+/// Use `println!` to output a colourised string about a certain action
+///
+/// Warning! unsafe!
+pub fn log(verbose: bool, color: &str, action: &str, category: &str, target: &str) {
+  if verbose == true {
+    println!("{} ({}): {}", format!("{action}").color(color), format!("{category}").bold(), target);
+  }
 }
 
 
@@ -126,7 +128,7 @@ pub fn ensure_dir(path: &str) {
 /// * [fs::create_dir](https://doc.rust-lang.org/std/fs/fn.create_dir.html)
 /// * [Path::new(...).exists()](https://doc.rust-lang.org/stable/std/path/struct.Path.html#method.exists)
 pub fn empty_dir(dir_path: &str) {
-  let empty_error: &str = &*format!("Failed to empty dir \"{}\"", dir_path);
+  let empty_error: &str = &format!("Failed to empty dir \"{}\"", dir_path);
   if !exists(dir_path) {
     fs::create_dir(dir_path).expect(empty_error);
   } else {
