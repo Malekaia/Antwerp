@@ -2,7 +2,7 @@
 use colored::Colorize;
 use glob::{glob, GlobError};
 use regex::Regex;
-use std::{fs, fs::File, path::Path, io::prelude::Write, path::PathBuf};
+use std::{fs, fs::File, path::Path, path::PathBuf, io::prelude::Write};
 
 
 /// **Description**:
