@@ -42,6 +42,11 @@ The source code included in this repository is distributed under an [MIT Licence
     - [ ] Generate sample files and source code
 
 ## References:
+**Rust**:
+* [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
+* [The Rust Reference: Linkage](https://doc.rust-lang.org/reference/linkage.html)
+* [The Cargo Book, Publishing on crates.io](https://doc.rust-lang.org/cargo/reference/publishing.html)
+
 **Crates**:
 * [Colored (crates.io)](https://crates.io/crates/colored)
 * [Glob (crates.io)](https://crates.io/crates/glob)
@@ -51,13 +56,9 @@ The source code included in this repository is distributed under an [MIT Licence
 * [Tera (crates.io)](https://crates.io/crates/tera)
 * [Titlecase (crates.io)](https://crates.io/crates/titlecase)
 
-**Rust**:
-* [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
-* [The Rust Reference: Linkage](https://doc.rust-lang.org/reference/linkage.html)
-* [StackOverflow: Why are Rust executables so huge?](https://stackoverflow.com/a/29008355/10415695)
-
-**Github**:
+**Other**:
 * [Known Outstanding Issues (Grass Crate)](https://github.com/connorskees/grass/issues/19)
+* [StackOverflow: Why are Rust executables so huge?](https://stackoverflow.com/a/29008355/10415695)
 
 ## Footnotes:
 1. ~~New scopes around `Lib::print` calls in `core.rs` are placeholders for verbose checks~~
