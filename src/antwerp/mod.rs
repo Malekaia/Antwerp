@@ -1,15 +1,17 @@
-//! Exposes Antwerp structs, enums and utilities for convenient use
-mod core;
+//! Conveniently exposes Antwerp and its tools, allowing for the import of all structs, enums and functions provided by Antwerp under a single `use` declaration.
+//!
+//! This library uses common names for many of its functions. It's advisable to import functions under the `Antwerp` namespace to prevent clogging the current scope with common names such as `init`, `render` or `route`.
+mod assets;
 mod lib;
-mod posts;
+mod core;
 
-pub use crate::antwerp::core::{Asset, Template};
-pub use crate::antwerp::posts::{Post, PostsConfig};
+pub use crate::antwerp::assets::{Asset, Post, Route, Template};
+pub use crate::antwerp::core::Config;
 
 #[allow(non_snake_case)]
 pub mod Antwerp {
+  pub use crate::antwerp::assets::*;
   pub use crate::antwerp::core::*;
-  pub use crate::antwerp::posts::*;
 }
 
 #[allow(non_snake_case)]

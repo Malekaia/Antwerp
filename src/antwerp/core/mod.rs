@@ -1,8 +1,6 @@
-//! Exposes asset copy/compile, template/route rendering and init utilities
-mod assets;
-mod templating;
-mod utils;
+//! Exposes Antwerp's main `Config` struct and init method
+mod config;
+mod init;
 
-pub use crate::antwerp::core::assets::*;
-pub use crate::antwerp::core::templating::*;
-pub use crate::antwerp::core::utils::*;
+pub use crate::antwerp::core::config::Config;
+pub use crate::antwerp::core::init::init;
