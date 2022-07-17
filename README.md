@@ -1,25 +1,29 @@
 # Antwerp
 ## Description:
-Build program for [logicalbranch.github.io](https://logicalbranch.github.io) ported from [Node.js](https://nodejs.org/en/) and [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is in the process of being converted into a minimalist framework for generating static websites.
+Antwerp used to be a closed-source turned open-source build program for [logicalbranch.github.io](https://logicalbranch.github.io) which is being ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/). It's currently in the process of being converted into a minimalist framework for building static websites.
 
 ## About:
-This program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a `./dist` folder.
+This program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a folder (`./dist`) in the current working directory.
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.50% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.07 seconds.
 
+## License:
+The source code included in this repository is distributed under an [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
+
 ## Changes (Crate):
-- [x] Document existing code
-- [x] Remove unnecessary `lib.rs` methods
-- [x] Ensure directory structures are user defined
-- [x] Standardise and integrate the `Article` module into Antwerp as module for all post types
-- [x] Modularise code and implement separation of concerns
-- [x] Ensure Tera inheritance chain is only built **once**
-- [x] Ensure Post data is collected and generated **once**
-- [x] Use `Antwerp::Config` to define behavior
-- [x] Remove all uses of `clone()` and reduce use of `to_owned()`
-- [x] Remove mutable static globals
-- [x] Replace all unsafe blocks with safe code
+- [x] Add documentation to existing code
+- [x] Remove redundant `lib.rs` methods
+- [x] Allow for user defined directory structures
+- [x] Standardise and integrate the `Article` module into Antwerp
+- [x] Implement a `Post` module to handle all post types
+- [x] Modularise code and separate concerns
+- [x] Ensure the Tera inheritance chain is built **once** and **only once**
+- [x] Ensure Post data is collected and generated **once** and **only once**
+- [x] Implement a `Config` module to define build resources and behavior
 - [x] Allow for multiple builds
+- [x] Remove all `.clone()` calls and reduce use of `.to_owned()`<sup>[[2]](#footnotes)</sup>
+- [x] Remove `static mut VERBOSE` and `mut static VERBOSE_CHECKED`
+- [x] Reimplement unsafe blocks with safe code
 - [ ] Add (opt-in) support for [SWC](https://swc.rs/)
 
 ## Ideas (Standalone executable):
@@ -36,18 +40,22 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
 
 ## References:
 **Crates**:
-* https://crates.io/crates/colored
-* https://crates.io/crates/glob
-* https://crates.io/crates/grass
-* https://crates.io/crates/regex
-* https://crates.io/crates/serde
-* https://crates.io/crates/tera
-* https://crates.io/crates/titlecase
+* [Colored (crates.io)](https://crates.io/crates/colored)
+* [Glob (crates.io)](https://crates.io/crates/glob)
+* [Grass (crates.io)](https://crates.io/crates/grass)
+* [Regex (crates.io)](https://crates.io/crates/regex)
+* [Serde (crates.io)](https://crates.io/crates/serde)
+* [Tera (crates.io)](https://crates.io/crates/tera)
+* [Titlecase (crates.io)](https://crates.io/crates/titlecase)
 
-**Other**:
-* https://programming-idioms.org/cheatsheet/Rust
-* https://github.com/connorskees/grass/issues/19
-* https://stackoverflow.com/a/29008355/10415695
+**Rust**:
+* [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
+* [The Rust Reference: Linkage](https://doc.rust-lang.org/reference/linkage.html)
+* [StackOverflow: Why are Rust executables so huge?](https://stackoverflow.com/a/29008355/10415695)
 
-## Notes:
-* ~~Scopes for `print` calls in `core.rs` are placeholders~~
+**Github**:
+* [Known Outstanding Issues (Grass Crate)](https://github.com/connorskees/grass/issues/19)
+
+## Footnotes:
+1. ~~New scopes around `Lib::print` calls in `core.rs` are placeholders for verbose checks~~
+2. `Antwerp::Lib::escape_html` and `Antwerp::Post::properties`
