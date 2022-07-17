@@ -48,13 +48,13 @@ The source code included in this repository is distributed under an [MIT Licence
 * [The Cargo Book, Publishing on crates.io](https://doc.rust-lang.org/cargo/reference/publishing.html)
 
 **Crates**:
-* [Colored (crates.io)](https://crates.io/crates/colored)
-* [Glob (crates.io)](https://crates.io/crates/glob)
-* [Grass (crates.io)](https://crates.io/crates/grass)
-* [Regex (crates.io)](https://crates.io/crates/regex)
-* [Serde (crates.io)](https://crates.io/crates/serde)
-* [Tera (crates.io)](https://crates.io/crates/tera)
-* [Titlecase (crates.io)](https://crates.io/crates/titlecase)
+* [Colored](https://crates.io/crates/colored)
+* [Glob](https://crates.io/crates/glob)
+* [Grass](https://crates.io/crates/grass)
+* [Regex](https://crates.io/crates/regex)
+* [Serde](https://crates.io/crates/serde)
+* [Tera](https://crates.io/crates/tera)
+* [Titlecase](https://crates.io/crates/titlecase)
 
 **Other**:
 * [Known Outstanding Issues (Grass Crate)](https://github.com/connorskees/grass/issues/19)
