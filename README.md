@@ -1,13 +1,13 @@
 # Antwerp
 ## Description:
-Build program for [logicalbranch.github.io](https://logicalbranch.github.io) ported from [Node.js](https://nodejs.org/en/) and [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is in the process of being converted into a minimalist standalone framework for generating static websites.
+Build program for [logicalbranch.github.io](https://logicalbranch.github.io) ported from [Node.js](https://nodejs.org/en/) and [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is in the process of being converted into a minimalist framework for generating static websites.
 
 ## About:
 This program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a `./dist` folder.
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.50% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.07 seconds.
 
-## Changes:
+## Changes (Crate):
 - [x] Document existing code
 - [x] Remove unnecessary `lib.rs` methods
 - [x] Ensure directory structures are user defined
@@ -19,10 +19,10 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
 - [x] Remove all uses of `clone()` and reduce use of `to_owned()`
 - [x] Remove mutable static globals
 - [x] Replace all unsafe blocks with safe code
+- [x] Allow for multiple builds
 - [ ] Add (opt-in) support for [SWC](https://swc.rs/)
 
-
-## Ideas:
+## Ideas (Standalone executable):
 - [ ] Implement a config file (`Antwerp.toml`)
   - [ ] Only print if `verbose` is enabled
   - [ ] Move `empty_root` to a config file
@@ -34,10 +34,20 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
     - [ ] Generate directory structure
     - [ ] Generate sample files and source code
 
-## Notes:
-  * ~~Scopes for `print` calls in `core.rs` are placeholders~~
+## References:
+**Crates**:
+* https://crates.io/crates/colored
+* https://crates.io/crates/glob
+* https://crates.io/crates/grass
+* https://crates.io/crates/regex
+* https://crates.io/crates/serde
+* https://crates.io/crates/tera
+* https://crates.io/crates/titlecase
 
-## Useful links:
- * https://programming-idioms.org/cheatsheet/Rust
- * https://github.com/connorskees/grass/issues/19
- * https://stackoverflow.com/a/29008355/10415695
+**Other**:
+* https://programming-idioms.org/cheatsheet/Rust
+* https://github.com/connorskees/grass/issues/19
+* https://stackoverflow.com/a/29008355/10415695
+
+## Notes:
+* ~~Scopes for `print` calls in `core.rs` are placeholders~~
