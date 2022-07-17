@@ -7,7 +7,7 @@ This program takes given resources and copies (static files), compiles (SCSS sty
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.50% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.07 seconds.
 
-<span style="color: #2196F3">**Update**</span>: 6 days, 18 hours, 28 minutes and 13 seconds after the initial commit (on 11/07/2022 at 05:14:29), the first complete build was made using the Rust port of Antwerp! See the full working example at [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
+**Update**: 6 days, 18 hours, 28 minutes and 13 seconds after the initial commit (11/07/2022 at 05:14:29), the first complete build was made using the Rust port of Antwerp. See the full working example at [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
 
 ## License:
 The source code included in this repository is distributed under an [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
