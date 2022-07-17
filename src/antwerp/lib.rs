@@ -8,8 +8,6 @@ use std::{fs, fs::File, path::Path, io::prelude::Write, path::PathBuf};
 /// **Description**:
 ///
 /// Use `println!` to output a colourised string about a certain action
-///
-/// Warning! unsafe!
 pub fn log(verbose: bool, color: &str, action: &str, category: &str, target: &str) {
   if verbose == true {
     println!("{} ({}): {}", format!("{action}").color(color), format!("{category}").bold(), target);
