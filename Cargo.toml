@@ -2,7 +2,13 @@
 name = "antwerp"
 version = "0.1.0"
 edition = "2021"
-description = "static website generator"
+description = "A minimalist framework for building static websites"
+license = "MIT"
+license-file = "LICENSE.md"
+readme = "README.md"
+homepage = "https://github.com/LogicalBranch/Antwerp"
+documentation = "https://github.com/LogicalBranch/Antwerp"
+repository = "https://github.com/LogicalBranch/Antwerp"
 
 [profile.dev]
 opt-level = 1
