@@ -27,7 +27,7 @@ The source code included in this repository is distributed under an [MIT Licence
 - [x] Remove `static mut VERBOSE` and `mut static VERBOSE_CHECKED`
 - [x] Reimplement unsafe blocks with safe code
 - [x] Remove unnecessary references and dereferences
-- [ ] Fix post template content not rendering
+- [x] Fix post template content not rendering
 - [ ] Add (opt-in) support for [SWC](https://swc.rs/)
 
 ## Changes (Standalone executable):
