@@ -38,7 +38,7 @@ pub fn build() {
     }
     // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
     for genre in &mut sorted {
-      genre.sort_by_key(| article | article.content.len());
+      genre.sort_by_key(| article | article.template_raw.len());
       genre.reverse();
     }
     sorted.into_iter().flatten().collect::<Vec<Post>>()
@@ -106,13 +106,10 @@ pub fn build() {
           output: &article.render_path,
           context: {
             let mut context: Context = Context::new();
-            let content: String = Antwerp::render_string(&mut config.tera, &article.content, Context::new());
-            context.insert("content", &content);
             context.insert("articles", &config.post_list);
             context.insert("article", &article);
+            context.insert("template_rendered", &Antwerp::render_string(&mut config.tera, &article.template_raw, Context::new()));
             context.insert("page_name", "article");
-            context.insert("artwork_credit", &article.artwork_credit);
-            context.insert("image", &article.image);
             context
           }
         });

@@ -49,10 +49,10 @@ pub struct Post {
   pub metadata: String,
   pub table_of_contents: String,
   // Post template data
-  pub template_path: String,
-  pub render_path: String,
   pub url: String,
-  pub content: String
+  pub render_path: String,
+  pub template_path: String,
+  pub template_raw: String
 }
 
 impl Post {
@@ -77,10 +77,10 @@ impl Post {
       metadata: String::new(),
       table_of_contents: String::new(),
       // Post template data
-      template_path: String::new(),
-      render_path: String::new(),
       url: String::new(),
-      content: String::new()
+      render_path: String::new(),
+      template_path: String::new(),
+      template_raw: String::new()
     }
   }
 
@@ -204,7 +204,7 @@ impl Post {
     // Insert the template path
     post.template_path = file_path.to_string();
     // Add the rendered content to the post
-    post.content = content;
+    post.template_raw = content;
     // Create a slug string for the post title
     post.slug = Lib::string_to_slug(&post.title);
     // Extract the artwork credits
