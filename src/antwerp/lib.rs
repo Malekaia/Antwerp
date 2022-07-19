@@ -53,7 +53,7 @@ pub fn read_file(file_path: &str) -> String {
 ///
 /// **References**:
 /// * [io::Write](https://doc.rust-lang.org/std/io/trait.Write.html#method.write_all)
-pub fn write_file(path: &str, content: &String) {
+pub fn write_file(path: &str, content: String) {
   // Ensure the file's directory exists
   ensure_dir(&path[0..path.rfind('/').unwrap()]);
   // Create the write error message

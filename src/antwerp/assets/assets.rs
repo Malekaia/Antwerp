@@ -43,10 +43,10 @@ pub fn assets(config: &Config) {
       Asset::File(source, destination, overwrite) => {
         // Log the update
         let overwrite_status: &str = if *overwrite == true { "overwrite: false" } else { "overwrite: true" };
-        Lib::log(config.verbose, "blue", "Copy", overwrite_status, &destination);
+        Lib::log(config.verbose, "blue", "Copy", overwrite_status, destination);
 
         // Copy the file to the intended destination
-        Lib::copy_file(&source, &destination, *overwrite);
+        Lib::copy_file(source, destination, *overwrite);
       },
 
       // Copy (recursive) directories
@@ -56,24 +56,30 @@ pub fn assets(config: &Config) {
         // Regular expression used to check the matches
         let re_check: Regex = Regex::new(check).expect(&format!("Error: failed to create regex: {}", check));
 
-        for path in Lib::walk_dir(source) {
+        for path_string in Lib::walk_dir(source) {
+          // Convert the path string
+          let path: &str = &path_string;
+
           // Ignore the match if it doesn't pass the check
-          if !re_check.is_match(&path) {
+          if !re_check.is_match(path) {
             continue;
           }
+
           // Remove trailing slashes from the destination path
           if destination.ends_with("/") {
             destination = &destination[0..(destination.len() - 1)]
           };
+
           // Create the destination path (without the source root)
-          let new_destination: &str = &*re_root.replace(&path, format!("{destination}/$2")).to_string();
+          let destination: &str = &re_root.replace(path, format!("{destination}/$2")).to_string();
+
           // Log the update
           let overwrite_status: &str = if *overwrite == true { "overwrite: false" } else { "overwrite: true" };
-          Lib::log(config.verbose, "blue", "Copy", overwrite_status, new_destination);
-          // Copy the file
-          Lib::copy_file(&path, new_destination, *overwrite);
-        }
+          Lib::log(config.verbose, "blue", "Copy", overwrite_status, destination);
 
+          // Copy the file
+          Lib::copy_file(path, destination, *overwrite);
+        }
       },
 
       // Compile SCSS assets
@@ -83,10 +89,11 @@ pub fn assets(config: &Config) {
           Ok(result) => result,
           Err(error) => panic!("Error: failed to compile SASS stylesheets\n\n{:?}", error)
         };
+
         // Log the update
-        Lib::log(config.verbose, "magenta", "Compile", "SCSS", &destination);
+        Lib::log(config.verbose, "magenta", "Compile", "SCSS", destination);
         // Write the compiled SCSS to the destination file
-        Lib::write_file(&destination, &result);
+        Lib::write_file(destination, result);
       }
     }
   }

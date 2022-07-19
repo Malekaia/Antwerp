@@ -35,7 +35,7 @@ pub fn render(tera: &Tera, template_path: &str, output: &str, context: &Context)
     Err(error) => panic!("Error: failed to render tera template:\n\n{}", error)
   };
   // Write the rendered template to the output file
-  Lib::write_file(output, &result);
+  Lib::write_file(output, result);
 }
 
 
@@ -44,7 +44,7 @@ pub fn render(tera: &Tera, template_path: &str, output: &str, context: &Context)
 /// Takes a string containing a Tera template string and returns a string containing the rendered template
 pub fn render_string(tera: &mut Tera, template_string: &String, context: Context) -> String {
   // Try to render the string and return it (panic on fail)
-  match tera.render_str(&template_string, &context) {
+  match tera.render_str(template_string, &context) {
     Ok(result) => result,
     Err(error) => panic!("Error: failed to render tera string:\n\n{}", error)
   }
@@ -56,9 +56,9 @@ pub fn render_string(tera: &mut Tera, template_string: &String, context: Context
 /// Takes template information (template name, output and context) and renders it to a file
 pub fn route(config: &Config, template_name: &str, output: &str, context: &Context) {
   // Log the update
-  Lib::log(config.verbose, "green", "Render", "static", &output);
+  Lib::log(config.verbose, "green", "Render", "static", output);
   // Render the given template
-  render(&config.tera, template_name, output, &context);
+  render(&config.tera, template_name, output, context);
 }
 
 
@@ -68,7 +68,7 @@ pub fn route(config: &Config, template_name: &str, output: &str, context: &Conte
 pub fn route_group(config: &Config, template_name: &str, templates: &Vec<Template>) {
   for template in templates {
     // Log the update
-    Lib::log(config.verbose, "green", "Render", "static", &template.output);
+    Lib::log(config.verbose, "green", "Render", "static", template.output);
     // Render the current template
     render(&config.tera, template_name, template.output, &template.context);
   }

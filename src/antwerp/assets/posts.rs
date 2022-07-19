@@ -120,7 +120,9 @@ impl Post {
         "published" => post.published = property_value,
         "image" => post.image = property_value,
         "author" => post.author = property_value,
-        unknown_key @ _ => Lib::log(config.verbose, "yellow", "Ignore", "unknown key", &format!("\"{unknown_key}\" in \"{file_path}\""))
+        unknown_key @ _ => {
+          Lib::log(config.verbose, "yellow", "Ignore", "unknown key", &format!("\"{unknown_key}\" in \"{file_path}\""))
+        }
       }
     }
 
@@ -140,14 +142,14 @@ impl Post {
       // Create the slug ID for the header
       let id_slug: String = Lib::string_to_slug(&header);
       // Insert the slug ID into the header
-      let html_header: String = re_toc_addition.replace(&capture[0], &format!("<h$1 id=\"{}\" ", &id_slug)).to_string();
+      let html_header: String = re_toc_addition.replace(&capture[0], &format!("<h$1 id=\"{}\" ", id_slug)).to_string();
       // Replace the header with a version that includes an ID
       content = content.replace(&capture[0], &html_header);
       // Add the current header to the table of contents
-      table_of_contents.push_str(&format!("<a href=\"#{}\" level=\"{}\">{}</a>", &id_slug, &capture[1], &header));
+      table_of_contents.push_str(&format!("<a href=\"#{}\" level=\"{}\">{}</a>", id_slug, &capture[1], header));
     }
     // Add the wrappers to the table of contents
-    post.table_of_contents = format!("<div class=\"table-of-contents\">{}</div>", &table_of_contents);
+    post.table_of_contents = format!("<div class=\"table-of-contents\">{}</div>", table_of_contents);
 
 
     // Generate the estimated read time for the post
@@ -186,15 +188,15 @@ impl Post {
         <link rel=\"canonical\" href=\"{url}\" />
       ",
       // sanitise input strings
-      title = &Lib::escape_html(&post.title),
-      description = &Lib::escape_html(&post.description),
-      category = &Lib::escape_html(&post.category),
-      subcategory = &Lib::escape_html(&post.subcategory),
-      genre = &Lib::escape_html(&post.genre),
-      keywords = &Lib::escape_html(&post.keywords),
-      published = &Lib::escape_html(&post.published),
-      image = &Lib::escape_html(&post.image),
-      url = &Lib::escape_html(&post.url)
+      title = Lib::escape_html(&post.title),
+      description = Lib::escape_html(&post.description),
+      category = Lib::escape_html(&post.category),
+      subcategory = Lib::escape_html(&post.subcategory),
+      genre = Lib::escape_html(&post.genre),
+      keywords = Lib::escape_html(&post.keywords),
+      published = Lib::escape_html(&post.published),
+      image = Lib::escape_html(&post.image),
+      url = Lib::escape_html(&post.url)
     // minify
     ).replace("\n        ", "");
 
@@ -208,13 +210,17 @@ impl Post {
     // Extract the artwork credits
     post.artwork_credit = titlecase(&post.image[0..post.image.find(":").unwrap()].replace("-", " "));
     // Generate the output path for the rendered template
-    let root_dist: &str = if config.dir_dist.ends_with("/") { &config.dir_dist[0..(config.dir_dist.len() - 1)] } else { config.dir_dist };
+    let root_dist: &str = if config.dir_dist.ends_with("/") {
+      &config.dir_dist[0..(config.dir_dist.len() - 1)]
+    } else {
+      config.dir_dist
+    };
     // Create the render path string
     post.render_path = config.path_render.replace("%dir_dist", root_dist)
                                          .replace("%category", &post.category)
                                          .replace("%slug", &post.slug);
     // Generate a url for the post
-    post.url = config.path_render.replace("%uri", &config.uri)
+    post.url = config.path_render.replace("%uri", config.uri)
                                  .replace("%category", &post.category)
                                  .replace("%slug", &post.slug);
 

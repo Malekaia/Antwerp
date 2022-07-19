@@ -110,7 +110,7 @@ pub fn build() {
             context.insert("content", &content);
             context.insert("articles", &config.post_list);
             context.insert("article", &article);
-            context.insert("page_name", &"article");
+            context.insert("page_name", "article");
             context.insert("artwork_credit", &article.artwork_credit);
             context.insert("image", &article.image);
             context
