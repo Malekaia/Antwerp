@@ -26,7 +26,8 @@ The source code included in this repository is distributed under an [MIT Licence
 - [x] Remove all `.clone()` calls and reduce use of `.to_owned()`<sup>[[2]](#footnotes)</sup>
 - [x] Remove `static mut VERBOSE` and `mut static VERBOSE_CHECKED`
 - [x] Reimplement unsafe blocks with safe code
-- [ ] Remove unnecessary references
+- [x] Remove unnecessary references
+- [ ] Fix post template content not rendering
 - [ ] Add (opt-in) support for [SWC](https://swc.rs/)
 
 ## Changes (Standalone executable):
