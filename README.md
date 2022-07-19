@@ -13,9 +13,9 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
 The source code included in this repository is distributed under an [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
 ## Changes (Crate):
-- [x] Delete `FileCache` module
-- [x] Support for Tera templates
-- [x] Support for SCSS stylesheets
+- [x] Remove `FileCache` module
+- [x] Support Tera templates
+- [x] Support SCSS stylesheets
 - [x] Reduce blocking I/O
 - [x] Create `verbose` option to stop I/O
 - [x] Document existing code
