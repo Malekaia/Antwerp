@@ -7,28 +7,38 @@ This program takes given resources and copies (static files), compiles (SCSS sty
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.678% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.065 seconds.
 
-**Update**: 6 days, 18 hours, 28 minutes and 13 seconds after the initial commit (11/07/2022 at 05:14:29), the first complete build was made using the Rust port of Antwerp. See the full working example at [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
+**Update**: On 17/07/2022 - 6 days, 18 hours and 28 minutes after the initial commit (11/07/2022 at 05:14:29) - the first complete build was made using the Rust port of Antwerp. See the full working example at [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
 
 ## License:
 The source code included in this repository is distributed under an [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
 ## Changes (Crate):
-- [x] Add documentation to existing code
+- [x] Delete `FileCache` module
+- [x] Support for Tera templates
+- [x] Support for SCSS stylesheets
+- [x] Reduce blocking I/O
+- [x] Create `verbose` option to stop I/O
+- [x] Document existing code
 - [x] Remove redundant `lib.rs` methods
-- [x] Allow for user defined directory structures
-- [x] Standardise and integrate the `Article` module into Antwerp
+- [x] Allow user defined directory structures
+- [x] Integrate the `Article` module into Antwerp
 - [x] Implement a `Post` module to handle all post types
-- [x] Modularise code and separate concerns
-- [x] Ensure the Tera inheritance chain is built **once** and **only once**
-- [x] Ensure Post data is collected and generated **once** and **only once**
+- [x] Generate a ToC (Table of Contents) for Posts
+- [ ] Create option to define header sizes for ToC
+- [x] Modularise code / separate concerns
+- [x] Ensure the Tera inheritance chain is only built once
+- [x] Ensure Post data is collected and generated once
 - [x] Implement a `Config` module to define build resources and behavior
-- [x] Allow for multiple builds
+- [x] Allow multiple builds
 - [x] Remove all `.clone()` calls and reduce use of `.to_owned()`<sup>[[2]](#footnotes)</sup>
-- [x] Remove `static mut VERBOSE` and `mut static VERBOSE_CHECKED`
-- [x] Reimplement unsafe blocks with safe code
-- [x] Remove unnecessary reference (`&`) and dereference (`*`) operators
-- [x] Fix post template content not rendering
+- [x] Replace `static mut VERBOSE` and `mut static VERBOSE_CHECKED` with config options
+- [x] Reimplement `unsafe` blocks with safe code
+- [x] Remove unnecessary reference (`&`) / dereference (`*`) operators
+- [x] Split `Post::content` into `Post::template_raw` and an optional `template_rendered` variable
 - [ ] Add (opt-in) support for [SWC](https://swc.rs/)
+- [ ] Create log file for file modification times
+  - [ ] Add time based config file to determine which files have been changed since previous build
+  - [ ] Only build changed files
 
 ## Changes (Standalone executable):
 - [ ] Implement a config file (`Antwerp.toml`)
@@ -60,6 +70,11 @@ The source code included in this repository is distributed under an [MIT Licence
 **Other**:
 * [Known Outstanding Issues (Grass Crate)](https://github.com/connorskees/grass/issues/19)
 * [StackOverflow: Why are Rust executables so huge?](https://stackoverflow.com/a/29008355/10415695)
+* [Sitemap generator](https://www.xml-sitemaps.com/)
+* [Google search console](https://search.google.com/search-console/)
+* [Google search console (inspect)](https://search.google.com/search-console/welcome?action=inspect)
+* [Google Trends](https://trends.google.com/trends/?geo=GB)
+
 
 ## Footnotes:
 1. ~~New scopes around `Lib::print` calls in `core.rs` are placeholders for verbose checks~~
