@@ -85,15 +85,17 @@ pub fn assets(config: &Config) {
       // Compile SCSS assets
       Asset::Scss(source, destination) => {
         // Try to compile the SCSS stylesheet (return if possible, panic if not)
-        let result: String = match grass::from_path(source, &grass::Options::default()) {
-          Ok(result) => result,
+        match grass::from_path(source, &grass::Options::default()) {
+          // Write the file if successful
+          Ok(result) => {
+            // Log the update
+            Lib::log(config.verbose, "magenta", "Compile", "SCSS", destination);
+            // Write the compiled SCSS to the destination file
+            Lib::write_file(destination, result);
+          },
+          // Panic and exit
           Err(error) => panic!("Error: failed to compile SASS stylesheets\n\n{:?}", error)
         };
-
-        // Log the update
-        Lib::log(config.verbose, "magenta", "Compile", "SCSS", destination);
-        // Write the compiled SCSS to the destination file
-        Lib::write_file(destination, result);
       }
     }
   }

@@ -30,12 +30,14 @@ pub fn tera(template_directory: &str) -> Tera {
 /// Renders a Tera template using a given context and writes it an output file
 pub fn render(tera: &Tera, template_path: &str, output: &str, context: &Context) {
   // Try to render the template
-  let result: String = match tera.render(template_path, context) {
-    Ok(result) => result,
+  match tera.render(template_path, context) {
+    // Write the rendered template to the output file
+    Ok(result) => {
+      Lib::write_file(output, result);
+    },
+    // Panic and exit
     Err(error) => panic!("Error: failed to render tera template:\n\n{}", error)
   };
-  // Write the rendered template to the output file
-  Lib::write_file(output, result);
 }
 
 
