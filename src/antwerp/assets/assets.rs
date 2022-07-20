@@ -15,8 +15,8 @@ use regex::Regex;
 pub enum Asset<'a> {
   // source, destination, overwrite
   File(&'a str, &'a str, bool),
-  // source, destination, check, overwrite
-  Folder(&'a str, &'a str, &'a str, bool),
+  // source, check, overwrite
+  Folder(&'a str, &'a str, bool),
   // source, destination
   Scss(&'a str, &'a str),
 }
@@ -41,57 +41,61 @@ pub fn assets(config: &Config) {
     match asset {
       // Copy static assets
       Asset::File(source, destination, overwrite) => {
+        // Create the from and to paths
+        let from: &str = &Lib::path::join(&config.dir_resources, source);
+        let to: &str = &Lib::path::join(&config.dir_output, destination);
+
         // Log the update
         let overwrite_status: &str = if *overwrite == true { "overwrite: false" } else { "overwrite: true" };
         Lib::log(config.verbose, "blue", "Copy", overwrite_status, destination);
 
         // Copy the file to the intended destination
-        Lib::copy_file(source, destination, *overwrite);
+        Lib::copy_file(from, to, *overwrite);
       },
 
       // Copy (recursive) directories
-      Asset::Folder(source, mut destination, check, overwrite) => {
-        // Regular expression used to remove the root of the source path
-        let re_root: Regex = Regex::new(r"^(.*?)/(.*?)$").unwrap();
+      Asset::Folder(source, check, overwrite) => {
         // Regular expression used to check the matches
         let re_check: Regex = Regex::new(check).expect(&format!("Error: failed to create regex: {}", check));
 
-        for path_string in Lib::walk_dir(source) {
-          // Convert the path string
-          let path: &str = &path_string;
+        // Create required paths
+        let search_path: &str = &Lib::path::join(&config.dir_resources, source);
 
+        for path_string in Lib::walk_dir(search_path) {
           // Ignore the match if it doesn't pass the check
-          if !re_check.is_match(path) {
+          if !re_check.is_match(&path_string) {
             continue;
           }
 
-          // Remove trailing slashes from the destination path
-          if destination.ends_with("/") {
-            destination = &destination[0..(destination.len() - 1)]
-          };
-
-          // Create the destination path (without the source root)
-          let destination: &str = &re_root.replace(path, format!("{destination}/$2")).to_string();
+          // Create the copy to and from paths
+          let from: &str = &Lib::path::from_cwd(&path_string);
+          let to: &str = &from.replace(&config.dir_resources, &config.dir_output);
 
           // Log the update
           let overwrite_status: &str = if *overwrite == true { "overwrite: false" } else { "overwrite: true" };
-          Lib::log(config.verbose, "blue", "Copy", overwrite_status, destination);
+          let mut to_display: &str = &to.replace(&config.dir_output, "");
+          to_display = if to_display.starts_with("/") { &to_display[1..to_display.len()] } else { to_display };
+          Lib::log(config.verbose, "blue", "Copy", overwrite_status, to_display);
 
           // Copy the file
-          Lib::copy_file(path, destination, *overwrite);
+          Lib::copy_file(from, to, *overwrite);
         }
       },
 
       // Compile SCSS assets
       Asset::Scss(source, destination) => {
+        // Create the from and to paths
+        let from: &str = &Lib::path::join(&config.dir_resources, source);
+        let to: &str = &Lib::path::join(&config.dir_output, destination);
+
         // Try to compile the SCSS stylesheet (return if possible, panic if not)
-        match grass::from_path(source, &grass::Options::default()) {
+        match grass::from_path(from, &grass::Options::default()) {
           // Write the file if successful
           Ok(result) => {
             // Log the update
             Lib::log(config.verbose, "magenta", "Compile", "SCSS", destination);
             // Write the compiled SCSS to the destination file
-            Lib::write_file(destination, result);
+            Lib::write_file(to, result);
           },
           // Panic and exit
           Err(error) => panic!("Error: failed to compile SASS stylesheets\n\n{:?}", error)
