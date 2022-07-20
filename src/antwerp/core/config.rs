@@ -3,10 +3,11 @@ use tera::Tera;
 
 pub struct Config<'a> {
   pub tera: Tera,
-  pub uri: &'a str,
-  pub uri_post: &'a str,
-  pub dir_dist: &'a str,
-  pub dir_templates: &'a str,
+  pub url_root: &'a str,
+  pub url_post: &'a str,
+  pub dir_resources: String,
+  pub dir_output: String,
+  pub dir_posts: String,
   pub path_render: &'a str,
   pub clean: bool,
   pub verbose: bool,
@@ -17,13 +18,14 @@ pub struct Config<'a> {
 }
 
 impl Config<'_> {
-  pub fn new(template_directory: &str) -> Config<'static> {
+  pub fn new(template_directory: String) -> Config<'static> {
     Config {
       tera: Antwerp::tera(template_directory),
-      uri: "",
-      uri_post: "",
-      dir_dist: "",
-      dir_templates: "",
+      url_root: "",
+      url_post: "",
+      dir_resources: String::new(),
+      dir_output: String::new(),
+      dir_posts: String::new(),
       path_render: "",
       clean: false,
       verbose: false,
