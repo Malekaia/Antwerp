@@ -9,7 +9,7 @@ This program takes given resources and copies (static files), compiles (SCSS sty
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.678% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.065 seconds.
 
-## Info:
+## Information:
 This project is experimental and has not been tested in production, please be cautious. For more information about ***open*** issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues) and for ***all*** issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
 
 ## License:
