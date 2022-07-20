@@ -12,49 +12,6 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
 ## License:
 The source code included in this repository is distributed under an [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
-## Depricatons
-
-## Features:
-- [x] Remove `FileCache` module
-- [x] Add support for Tera templates
-- [x] Add support for SCSS stylesheets
-- [x] Reduce blocking I/O
-- [x] Create `verbose` option to stop I/O
-- [x] Document existing code
-- [x] Remove redundant `lib.rs` methods
-- [x] Allow user defined directory structures
-- [x] Integrate the `Article` module into Antwerp
-- [x] Implement a `Post` module to handle all post types
-- [x] Generate a ToC (Table of Contents) for Posts
-- [ ] Create option to define header sizes for ToC
-- [x] Modularise code / separate concerns
-- [x] Ensure the Tera inheritance chain is only built once
-- [x] Ensure Post data is collected and generated once
-- [x] Implement a `Config` module to define build resources and behavior
-- [x] Allow multiple builds
-- [x] Remove all `.clone()` calls and reduce use of `.to_owned()`<sup>[[2]](#footnotes)</sup>
-- [x] Replace `static mut VERBOSE` and `mut static VERBOSE_CHECKED` with config options
-- [x] Reimplement `unsafe` blocks with safe code
-- [x] Remove unnecessary reference (`&`) / dereference (`*`) operators
-- [x] Split `Post::content` into `Post::template_raw` and an optional `template_rendered` variable
-- [x] Implement stricter requirements for user defined paths
-- [ ] Add (opt-in) support for [SWC](https://swc.rs/)
-- [ ] Create log file for file modification times
-  - [ ] Add time based config file to determine which files have been changed since previous build
-  - [ ] Only build changed files
-
-## Changes (Standalone executable):
-- [ ] Implement a config file (`Antwerp.toml`)
-  - [ ] Only print if `verbose` is enabled
-  - [ ] Move `empty_root` to a config file
-    - [ ] confirm delete if option is true (?)
-- [ ] Implement CLI interface
-  - [ ] Call init methods for config options
-  - [ ] Implement a `watch` CLI option (`--watch`)
-  - [ ] Generate new projects
-    - [ ] Generate directory structure
-    - [ ] Generate sample files and source code
-
 ## References:
 **Rust**:
 * [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
@@ -78,8 +35,3 @@ The source code included in this repository is distributed under an [MIT Licence
 * [Google search console](https://search.google.com/search-console/)
 * [Google search console (inspect)](https://search.google.com/search-console/welcome?action=inspect)
 * [Google Trends](https://trends.google.com/trends/?geo=GB)
-
-
-## Footnotes:
-1. ~~New scopes around `Lib::print` calls in `core.rs` are placeholders for verbose checks~~
-2. `Antwerp::Lib::escape_html` and `Antwerp::Post::properties`
