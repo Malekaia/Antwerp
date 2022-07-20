@@ -2,7 +2,7 @@
 name = "antwerp"
 version = "0.1.0"
 edition = "2021"
-description = "A minimalist framework for building static websites"
+description = "A framework for building static sites"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/LogicalBranch/Antwerp"
