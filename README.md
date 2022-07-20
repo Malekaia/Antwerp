@@ -12,10 +12,12 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
 ## License:
 The source code included in this repository is distributed under an [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
-## Changes (Crate):
+## Depricatons
+
+## Features:
 - [x] Remove `FileCache` module
-- [x] Support Tera templates
-- [x] Support SCSS stylesheets
+- [x] Add support for Tera templates
+- [x] Add support for SCSS stylesheets
 - [x] Reduce blocking I/O
 - [x] Create `verbose` option to stop I/O
 - [x] Document existing code
@@ -35,6 +37,7 @@ The source code included in this repository is distributed under an [MIT Licence
 - [x] Reimplement `unsafe` blocks with safe code
 - [x] Remove unnecessary reference (`&`) / dereference (`*`) operators
 - [x] Split `Post::content` into `Post::template_raw` and an optional `template_rendered` variable
+- [x] Implement stricter requirements for user defined paths
 - [ ] Add (opt-in) support for [SWC](https://swc.rs/)
 - [ ] Create log file for file modification times
   - [ ] Add time based config file to determine which files have been changed since previous build
@@ -57,6 +60,7 @@ The source code included in this repository is distributed under an [MIT Licence
 * [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
 * [The Rust Reference: Linkage](https://doc.rust-lang.org/reference/linkage.html)
 * [The Cargo Book, Publishing on crates.io](https://doc.rust-lang.org/cargo/reference/publishing.html)
+* [Observing variable changes](https://users.rust-lang.org/t/observe-changes-of-variable/59069/8)
 
 **Crates**:
 * [Colored](https://crates.io/crates/colored)
