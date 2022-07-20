@@ -2,7 +2,7 @@
 ## About:
 Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io) that was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/), it's now an open-source framework for building static websites.
 
-It was ported to Rust improve the performance and build speeds - resulting in an optimised binary where the average build time (real / total elapsed) is 97.68% faster than its Node.js counterpart - decreasing average build speeds from 2.8 seconds to 0.065 seconds.
+It was ported to Rust improve performance and build speeds - resulting in an optimised binary where the average build time (real / total elapsed) is 97.68% faster than its Node.js counterpart - decreasing average build speeds from 2.8 seconds to 0.065 seconds.
 
 ## Description:
 The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user defined folder (or `./dist` for testing purposes) in the current working directory. See a working example of a build config [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
