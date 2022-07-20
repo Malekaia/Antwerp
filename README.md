@@ -14,7 +14,7 @@ This project is experimental and not production ready or tested, please be cauti
 Build speed was the deciding factor in the decision to go from JavaScript (Node.js) to Rust. During testing, the Node.js version logged average build speeds of ~2.8s to ~3.0s, while the Rust version clocked in at ~0.07s on average, roughly ~97.58% faster for the same test cases.
 
 ## License:
-The source code included in this repository is distributed, for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/), For the full license, see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
+The source code included in this repository is distributed, for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full license, see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
 ## References:
 **Crates**: [Colored](https://crates.io/crates/colored), [Glob](https://crates.io/crates/glob), [Grass](https://crates.io/crates/grass), [Regex](https://crates.io/crates/regex), [Serde](https://crates.io/crates/serde), [SWC](https://crates.io/crates/swc), [Tera](https://crates.io/crates/tera), [Titlecase](https://crates.io/crates/titlecase)
