@@ -9,4 +9,4 @@ pub use crate::antwerp::assets::assets::{Asset, assets};
 pub use crate::antwerp::assets::posts::Post;
 pub use crate::antwerp::assets::route::Route;
 pub use crate::antwerp::assets::templating::{Template, tera, render, render_string, route, route_group};
-pub use crate::antwerp::assets::utils::empty_root;
+pub use crate::antwerp::assets::utils::clean_build;
