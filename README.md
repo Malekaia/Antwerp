@@ -1,11 +1,11 @@
 # Antwerp
 ## Description:
-Antwerp used to be a closed-source turned open-source build program for [logicalbranch.github.io](https://logicalbranch.github.io) which is being ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/). It's currently in the process of being converted into a minimalist framework for building static websites.
+Antwerp used to be a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io) that was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/). It's now an open-source framework for building static websites.
 
 **Update**: On 17/07/2022 - 6 days and 18 hours after the initial commit (on 11/07/2022 at 05:14:29) - the first complete build was made using the Rust port of Antwerp. See the full working example at [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
 
 ## About:
-This program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a folder (`./dist`) in the current working directory.
+The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user defined folder (or `./dist` for testing purposes) in the current working directory.
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.678% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.065 seconds.
 
@@ -22,6 +22,7 @@ The source code included in this repository is freely distributed under the [MIT
 * [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
 * [The Rust Reference: Linkage](https://doc.rust-lang.org/reference/linkage.html)
 * [The Cargo Book, Publishing on crates.io](https://doc.rust-lang.org/cargo/reference/publishing.html)
+* [Rust Analyzer](https://rust-analyzer.github.io/)
 * [Observing variable changes](https://users.rust-lang.org/t/observe-changes-of-variable/59069/8)
 
 **Other**:
