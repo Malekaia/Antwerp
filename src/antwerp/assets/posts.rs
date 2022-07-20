@@ -84,7 +84,6 @@ impl Post {
     }
   }
 
-
   /// Extracts user defined data from a template to generate and populate a new instance of Post
   ///
   /// **Behaviour**:
@@ -99,7 +98,6 @@ impl Post {
     // Read and create a mutable copy the file content
     let file_content: String = Lib::read_file(&file_path);
     let mut content: String = file_content.to_owned();
-
 
     // Regular expression used to extract static data embedded in the template as HTML comments
     let re_define: Regex = Regex::new(r"<!-- define (.*?): (.*?) -->\n").unwrap();
@@ -126,7 +124,6 @@ impl Post {
       }
     }
 
-
     // Create a string for the table of contents
     let mut table_of_contents: String = "".to_string();
     // Regex to extract header tags
@@ -151,7 +148,6 @@ impl Post {
     // Add the wrappers to the table of contents
     post.table_of_contents = format!("<div class=\"table-of-contents\">{}</div>", table_of_contents);
 
-
     // Generate the estimated read time for the post
     let word_count: f32 = content.split(" ").collect::<Vec<&str>>().len() as f32;
     let words_per_minute: f32 = 160f32;
@@ -163,7 +159,6 @@ impl Post {
     };
     post.estimated_read_time = format!("{} minute read", humanised_wpm);
 
-
     // Generate HTML metadata for the post
     post.metadata = format!("
         <meta name=\"keywords\" content=\"{keywords}\" />
@@ -172,6 +167,7 @@ impl Post {
         <meta name=\"revised\" content=\"{published}\" />
         <meta name=\"date\" content=\"{published}\" />
         <meta name=\"pagename\" content=\"{title}\" />
+        <meta name=\"title\" content=\"{title}\" />
         <meta name=\"description\" content=\"{description}\" />
         <meta name=\"abstract\" content=\"{description}\" />
         <meta name=\"summary\" content=\"{description}\" />
@@ -200,7 +196,6 @@ impl Post {
     // minify
     ).replace("\n        ", "");
 
-
     // Insert the template path
     post.template_path = file_path.to_string();
     // Add the rendered content to the post
@@ -209,22 +204,13 @@ impl Post {
     post.slug = Lib::string_to_slug(&post.title);
     // Extract the artwork credits
     post.artwork_credit = titlecase(&post.image[0..post.image.find(":").unwrap()].replace("-", " "));
-
     // Create the render path string
-    let render_path: String = config.path_render.replace("%category", &post.category)
-                                                .replace("%slug", &post.slug);
-
+    let render_path: String = config.path_render.replace("%category", &post.category).replace("%slug", &post.slug);
     post.render_path = Lib::path::join(&config.dir_output, &render_path);
-
     // Generate a url for the post
-    post.url = config.path_render.replace("%url_root", config.url_root)
-                                 .replace("%category", &post.category)
-                                 .replace("%slug", &post.slug);
-
-    // Return the post
+    post.url = config.path_render.replace("%url_root", config.url_root).replace("%category", &post.category).replace("%slug", &post.slug);
     post
   }
-
 
   /// Create a Vector containing Post objects containing information for each post in a specified directory. Use with `PostConfig`
   ///
