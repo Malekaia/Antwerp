@@ -209,18 +209,15 @@ impl Post {
     post.slug = Lib::string_to_slug(&post.title);
     // Extract the artwork credits
     post.artwork_credit = titlecase(&post.image[0..post.image.find(":").unwrap()].replace("-", " "));
-    // Generate the output path for the rendered template
-    let root_dist: &str = if config.dir_dist.ends_with("/") {
-      &config.dir_dist[0..(config.dir_dist.len() - 1)]
-    } else {
-      config.dir_dist
-    };
+
     // Create the render path string
-    post.render_path = config.path_render.replace("%dir_dist", root_dist)
-                                         .replace("%category", &post.category)
-                                         .replace("%slug", &post.slug);
+    let render_path: String = config.path_render.replace("%category", &post.category)
+                                                .replace("%slug", &post.slug);
+
+    post.render_path = Lib::path::join(&config.dir_output, &render_path);
+
     // Generate a url for the post
-    post.url = config.path_render.replace("%uri", config.uri)
+    post.url = config.path_render.replace("%url_root", config.url_root)
                                  .replace("%category", &post.category)
                                  .replace("%slug", &post.slug);
 
@@ -235,7 +232,7 @@ impl Post {
   /// * Extract all templates in the config's `dir_tem`
   pub fn list(config: &Config) -> Vec<Post> {
     // Walk the given directory
-    Lib::walk_dir(config.dir_templates)
+    Lib::walk_dir(&config.dir_posts)
         // Convert into an Iter
         .iter()
         // Generate the properties for each post
