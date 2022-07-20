@@ -9,11 +9,11 @@ This program takes given resources and copies (static files), compiles (SCSS sty
 
 It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.678% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.065 seconds.
 
-## Information:
-This project is experimental and has not been tested in production, please be cautious. For more information about open issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues) and for all issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
-
 ## License:
 The source code included in this repository is freely distributed under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
+
+## Information:
+This project is experimental and has not been tested in production, please be cautious. For more information about open issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues) and for all issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
 
 ## References:
 **Crates**: [Colored](https://crates.io/crates/colored), [Glob](https://crates.io/crates/glob), [Grass](https://crates.io/crates/grass), [Regex](https://crates.io/crates/regex), [Serde](https://crates.io/crates/serde), [SWC](https://crates.io/crates/swc), [Tera](https://crates.io/crates/tera), [Titlecase](https://crates.io/crates/titlecase)
