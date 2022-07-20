@@ -1,11 +1,11 @@
 # Antwerp
 ## About:
-Antwerp used to be a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io) that was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/), it's now an open-source framework for building static websites.
+Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io) that was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/), it's now an open-source framework for building static websites.
 
-It was ported from Node.js & Pug to Rust & Tera to improve the performance and speed of the build program, resulting in an (optimised) binary where the real (total elapsed) build time is - on average - 97.678% faster than its Node.js counterpart, a decrease in average build speed from 2.8 seconds to 0.065 seconds.
+It was ported to Rust improve the performance and speed of the build program - resulting in an optimised binary where the average build time (real / total elapsed) is 97.68% faster than its Node.js counterpart - decreasing average build speeds from 2.8 seconds to 0.065 seconds.
 
 ## Description:
-The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user defined folder (or `./dist` for testing purposes) in the current working directory. See a working example at [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
+The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user defined folder (or `./dist` for testing purposes) in the current working directory. See a working example of a build config [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
 
 ## Information:
 This project is experimental and has not been tested in production, please be cautious. For more information about open issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues) and for all issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
