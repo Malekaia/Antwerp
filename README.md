@@ -18,7 +18,7 @@ The source code included in this repository is freely distributed under the [MIT
 ## References:
 **Crates**: [Colored](https://crates.io/crates/colored), [Glob](https://crates.io/crates/glob), [Grass](https://crates.io/crates/grass), [Regex](https://crates.io/crates/regex), [Serde](https://crates.io/crates/serde), [SWC](https://crates.io/crates/swc), [Tera](https://crates.io/crates/tera), [Titlecase](https://crates.io/crates/titlecase)
 
-**Languages**:
+**Language**:
 * [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
 * [The Rust Reference: Linkage](https://doc.rust-lang.org/reference/linkage.html)
 * [The Cargo Book, Publishing on crates.io](https://doc.rust-lang.org/cargo/reference/publishing.html)
@@ -27,7 +27,7 @@ The source code included in this repository is freely distributed under the [MIT
 **Other**:
 * [Known Outstanding Issues (Grass Crate)](https://github.com/connorskees/grass/issues/19)
 * [StackOverflow: Why are Rust executables so huge?](https://stackoverflow.com/a/29008355/10415695)
-* [Sitemap generator](https://www.xml-sitemaps.com/)
-* [Google search console](https://search.google.com/search-console/)
-* [Google search console (inspect)](https://search.google.com/search-console/welcome?action=inspect)
-* [Google Trends](https://trends.google.com/trends/?geo=GB)
+<!-- * [Sitemap generator](https://www.xml-sitemaps.com/) -->
+<!-- * [Google search console](https://search.google.com/search-console/) -->
+<!-- * [Google search console (inspect)](https://search.google.com/search-console/welcome?action=inspect) -->
+<!-- * [Google Trends](https://trends.google.com/trends/?geo=GB) -->
