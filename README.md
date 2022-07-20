@@ -8,7 +8,7 @@ It was ported to Rust improve the performance and speed of the build program - r
 The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user defined folder (or `./dist` for testing purposes) in the current working directory. See a working example of a build config [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
 
 ## Information:
-This project is experimental and has not been tested in production, please be cautious. For more information about open issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues) and for all issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
+This project is experimental and has not been tested in production, please be cautious. To see open issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues), for all issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
 
 ## License:
 The source code included in this repository is freely distributed under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
