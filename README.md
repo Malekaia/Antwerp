@@ -13,7 +13,7 @@ It was ported from Node.js & Pug to Rust & Tera to improve the performance and s
 This project is experimental and has not been tested in production, please be cautious. For more information about open issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues) and for all issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
 
 ## License:
-The source code included in this repository is distributed under an [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
+The source code included in this repository is freely distributed under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
 ## References:
 **Crates**: [Colored](https://crates.io/crates/colored), [Glob](https://crates.io/crates/glob), [Grass](https://crates.io/crates/grass), [Regex](https://crates.io/crates/regex), [Serde](https://crates.io/crates/serde), [SWC](https://crates.io/crates/swc), [Tera](https://crates.io/crates/tera), [Titlecase](https://crates.io/crates/titlecase)
