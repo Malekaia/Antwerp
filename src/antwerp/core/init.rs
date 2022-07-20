@@ -2,7 +2,7 @@ use crate::antwerp::{Antwerp, Config, Route};
 
 pub fn init(config: &Config) {
   if config.clean == true {
-    Antwerp::empty_root(&config, config.dir_dist);
+    Antwerp::empty_root(&config);
   }
 
   Antwerp::assets(&config);
