@@ -1,17 +1,20 @@
 # Antwerp
 ## About:
-Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io) that was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/), it's now an open-source framework for building static websites.
-
-It was ported to Rust improve performance and build speeds - resulting in an optimised binary where the average build time (real / total elapsed) is ~97.68% faster than its Node.js counterpart - decreasing average build speeds from 2.8 seconds to 0.065 seconds.
+Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io). It was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is now an open-source framework for building static websites.
 
 ## Description:
-The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user defined folder (or `./dist` for testing purposes) in the current working directory. See a working example of a build config [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
+The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user-defined folder (or `./dist` for testing purposes) in the current working directory.
+
+For a sample build config, see [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
 
 ## Information:
-This project is experimental and has not been tested in production, please be cautious. To see open issues and scheduled updates [click here](https://github.com/LogicalBranch/Antwerp/issues), for all issues and updates [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
+This project is experimental and not production ready or tested, please be cautious. For open issues and scheduled updates, [click here](https://github.com/LogicalBranch/Antwerp/issues). For all issues and updates, [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
+
+## Why Rust?
+Build speed was the deciding factor in the decision to go from JavaScript (Node.js) to Rust. During testing, the Node.js version logged average build speeds of ~2.8s to ~3.0s, while the Rust version clocked in at ~0.07s on average, roughly ~97.58% faster for the same test cases.
 
 ## License:
-The source code included in this repository is freely distributed under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full licensing document see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
+The source code included in this repository is distributed, for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/), For the full license, see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
 ## References:
 **Crates**: [Colored](https://crates.io/crates/colored), [Glob](https://crates.io/crates/glob), [Grass](https://crates.io/crates/grass), [Regex](https://crates.io/crates/regex), [Serde](https://crates.io/crates/serde), [SWC](https://crates.io/crates/swc), [Tera](https://crates.io/crates/tera), [Titlecase](https://crates.io/crates/titlecase)
