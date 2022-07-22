@@ -6,9 +6,6 @@ It takes resources specified in a config object and copies assets & directories,
 
 This project is experimental and not production ready or tested, please be cautious. For open issues and scheduled updates, [click here](https://github.com/LogicalBranch/Antwerp/issues). For all issues and updates, [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
 
-## Why Rust?
-The deciding factor to port to Rust was build speed. During testing, the Node.js version logged average build speeds of ~2.8s to ~3.0s, while the Rust version clocked in at ~0.07s on average, roughly ~97.58% faster for the same tests.
-
 ## License:
 The source code included in this repository is distributed, for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full license, see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
 
