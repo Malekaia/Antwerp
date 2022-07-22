@@ -4,7 +4,6 @@ use glob::{glob, GlobError};
 use regex::Regex;
 use std::{fs, fs::File, path::Path, path::PathBuf, io::prelude::Write};
 
-
 /// **Description**:
 ///
 /// Use `println!` to output a colourised string about a certain action
@@ -14,38 +13,48 @@ pub fn log(verbose: bool, color: &str, action: &str, category: &str, target: &st
   }
 }
 
-
 /// **Description**:
 ///
 /// Standardises and simplifies file/folder path handling
 pub mod path {
   use std::{env, path::{Path, PathBuf}};
 
-  pub static PATH_ERROR: &str = "Error: failed to create path";
-
   /// **Description**:
   ///
   /// Joins an absolute parent path with a child path
   pub fn join(parent: &str, child: &str) -> String {
     // Create the path
-    Path::new(parent).canonicalize().expect(PATH_ERROR).join(child)
-      // Convert the path into a string
-      .display().to_string()
-      // Remove unnecessary relative paths
-      .replace("/./", "/")
+    Path::new(parent)
+         // Get the absolute form of the path
+         .canonicalize()
+         // Handle errors
+         .expect(&*format!("Error: failed to join \"{}\" with \"{}\"", parent, child))
+         // Add the child path to the parent path
+         .join(child)
+         // Convert the path into a string
+         .display().to_string()
+         // Remove unnecessary relative paths
+         .replace("/./", "/")
   }
 
   /// **Description**:
   ///
   /// Converts a path into its absolute format using the CWD as its root
   pub fn from_cwd(child: &str) -> String {
-    let current_working_directory: PathBuf = env::current_dir().expect(PATH_ERROR);
+    // Get the current working directory
+    let current_working_directory: PathBuf = env::current_dir().expect("Error: failed to get CWD");
     // Create the path
-    Path::new(&current_working_directory).canonicalize().expect(PATH_ERROR).join(child)
-      // Convert the path into a string
-      .display().to_string()
-      // Remove unnecessary relative paths
-      .replace("/./", "/")
+    Path::new(&current_working_directory)
+         // Get the absolute form of the CWD
+         .canonicalize()
+         // Handle errors
+         .expect(&*format!("Error: failed to create absolute path from CWD"))
+         // Add the child path to the parent path
+         .join(child)
+         // Convert the path into a string
+         .display().to_string()
+         // Remove unnecessary relative paths
+         .replace("/./", "/")
   }
 
   /// **Description**:
@@ -53,14 +62,17 @@ pub mod path {
   /// Converts a given path to it's absolute verison
   pub fn absolute(child: &str) -> String {
     // Create the path
-    Path::new(child).canonicalize().expect(PATH_ERROR)
-      // Convert the path into a string
-      .display().to_string()
-      // Remove unnecessary relative paths
-      .replace("/./", "/")
+    Path::new(child)
+         // Get the absolute form of the child path
+         .canonicalize()
+         // Handle errors
+         .expect(&*format!("Error: "))
+         // Convert the path into a string
+         .display().to_string()
+         // Remove unnecessary relative paths
+         .replace("/./", "/")
   }
 }
-
 
 /// **Description**:
 ///
@@ -71,7 +83,6 @@ pub mod path {
 pub fn exists(path: &str) -> bool {
   Path::new(path).exists()
 }
-
 
 /// **Description**:
 ///
@@ -87,7 +98,6 @@ pub fn exists(path: &str) -> bool {
 pub fn read_file(file_path: &str) -> String {
   fs::read_to_string(file_path).expect(&format!("Error: failed to read file: \"{}\"", file_path))
 }
-
 
 /// **Description**:
 ///
@@ -112,7 +122,6 @@ pub fn write_file(path: &str, content: String) {
   file.write_all(content.as_bytes()).expect(write_error);
 }
 
-
 /// **Description**:
 ///
 /// Copy a file from a source to a destination, with explicit overwrite permissions
@@ -136,7 +145,6 @@ pub fn copy_file(from: &str, to: &str, overwrite: bool) {
   }
 }
 
-
 /// **Description**:
 ///
 /// Checks if a given directory exists and creates it if it doesn't
@@ -152,7 +160,6 @@ pub fn ensure_dir(path: &str) {
     }
   }
 }
-
 
 /// **Description**:
 ///
@@ -182,7 +189,6 @@ pub fn empty_dir(dir_path: &str) {
   }
 }
 
-
 /// **Description**:
 ///
 /// Glob a directory and return a Vector of Strings (wrapper for [glob::glob](https://docs.rs/glob/0.3.0/glob/fn.glob.html))
@@ -207,7 +213,6 @@ pub fn walk_dir(directory: &str) -> Vec<String> {
     .collect::<Vec<String>>()
 }
 
-
 /// **Description**:
 ///
 /// Convert a string to slug case
@@ -222,7 +227,6 @@ pub fn string_to_slug(value: &String) -> String {
   let re_delimiter: Regex = Regex::new(r"\s+").unwrap();
   re_delimiter.replace_all(result.trim(), "-").to_string()
 }
-
 
 /// A list of characters and their corresponding HTML entities
 static HTML_ESCAPABLE: [[&str; 2]; 31] = [
@@ -258,7 +262,6 @@ static HTML_ESCAPABLE: [[&str; 2]; 31] = [
   ["}", "&#125;"], // Closing/Right curly brace
   ["~", "&#126;"]  // Tilde
 ];
-
 
 /// **Description**:
 ///
