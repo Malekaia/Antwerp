@@ -1,17 +1,13 @@
 # Antwerp
-## About:
+## Overview:
 Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io). It was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is now an open-source framework for building static websites.
 
-## Description:
-The Antwerp build program takes given resources and copies (static files), compiles (SCSS stylesheets), and renders (Tera templates) to generate a static website in a user-defined folder in the current working directory (or `./dist` for testing).
+It takes resources specified in a config object and copies assets & directories, compiles SCSS stylesheets, and renders Tera templates to generate a static website in a user-defined folder (in the [CWD](https://linux.die.net/man/3/cwd)). Antwerp also supports multiple builds using seperate config instances. For a sample build config, see [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
 
-For a sample build config, see [src/test/logicalbranch.rs](https://github.com/LogicalBranch/Antwerp/blob/master/src/test/logicalbranch.rs).
-
-## Information:
 This project is experimental and not production ready or tested, please be cautious. For open issues and scheduled updates, [click here](https://github.com/LogicalBranch/Antwerp/issues). For all issues and updates, [click here](https://github.com/LogicalBranch/Antwerp/issues?q=is%3Aissue).
 
 ## Why Rust?
-Build speed was the deciding factor in the decision to go from JavaScript (Node.js) to Rust. During testing, the Node.js version logged average build speeds of ~2.8s to ~3.0s, while the Rust version clocked in at ~0.07s on average, roughly ~97.58% faster for the same test cases.
+The deciding factor to port to Rust was build speed. During testing, the Node.js version logged average build speeds of ~2.8s to ~3.0s, while the Rust version clocked in at ~0.07s on average, roughly ~97.58% faster for the same tests.
 
 ## License:
 The source code included in this repository is distributed, for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full license, see [LICENSE.md](https://github.com/LogicalBranch/Antwerp/blob/master/LICENSE.md).
