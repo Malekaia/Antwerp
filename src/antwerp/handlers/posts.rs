@@ -5,7 +5,7 @@ use titlecase::titlecase;
 
 /// A struct that simplifies post management. Encapsulates post data and contains methods to extract data from and generate data for posts and collect Vectors containing Post objects for each post.
 ///
-/// **Extracted (user defined) post data**:
+/// **Extracted (user-defined) post data**:
 /// * title
 /// * description
 /// * category
@@ -31,7 +31,7 @@ use titlecase::titlecase;
 /// * content
 #[derive(Serialize)]
 pub struct Post {
-  // Extracted (user defined) post data
+  // Extracted (user-defined) post data
   pub title: String,
   pub description: String,
   pub category: String,
@@ -59,7 +59,7 @@ impl Post {
   /// Create a new instance of Post, where all fields are instantiated to empty strings using `String::new()`
   pub fn new() -> Post {
     Post {
-      // Extracted (user defined) post data
+      // Extracted (user-defined) post data
       title: String::new(),
       description: String::new(),
       category: String::new(),
@@ -84,7 +84,7 @@ impl Post {
     }
   }
 
-  /// Extracts user defined data from a template to generate and populate a new instance of Post
+  /// Extracts user-defined data from a template to generate and populate a new instance of Post
   ///
   /// **Behaviour**:
   /// * Extract the post's `title`, `description`, `category`, `subcategory`, `genre`, `keywords`, `tags`, `published` (date), `image` and `author`
@@ -98,6 +98,7 @@ impl Post {
     // Read and create a mutable copy the file content
     let file_content: String = Lib::read_file(&file_path);
     let mut content: String = file_content.to_owned();
+
 
     // Regular expression used to extract static data embedded in the template as HTML comments
     let re_define: Regex = Regex::new(r"<!-- define (.*?): (.*?) -->\n").unwrap();
@@ -124,14 +125,15 @@ impl Post {
       }
     }
 
+
     // Create a string for the table of contents
     let mut table_of_contents: String = "".to_string();
     // Regex to extract header tags
-    let re_toc: Regex = Regex::new("<h(3|5)(.*?c)lass=[\"\']text-title[\"\'](.*?>|>)(.*?)</h(3|5)>").unwrap();
+    let re_toc: Regex = Regex::new("<h([1-6]{1})(.*?c)lass=[\"\']text-title[\"\'](.*?>|>)(.*?)</h([1-6]{1})>").unwrap();
     // Regex to extract non alpha-numeric header ends
     let re_toc_end: Regex = Regex::new(r"[^a-zA-Z0-9]$").unwrap();
     // Regex to add an ID to headers
-    let re_toc_addition: Regex = Regex::new(r"<h(3|5) ").unwrap();
+    let re_toc_addition: Regex = Regex::new(r"<h([1-6]{1}) ").unwrap();
     // Iterate captures of "re_toc"
     for capture in re_toc.captures_iter(&file_content) {
       // Extract the header's content
@@ -143,10 +145,11 @@ impl Post {
       // Replace the header with a version that includes an ID
       content = content.replace(&capture[0], &html_header);
       // Add the current header to the table of contents
-      table_of_contents.push_str(&format!("<a href=\"#{}\" level=\"{}\">{}</a>", id_slug, &capture[1], header));
+      table_of_contents.push_str(&format!("<a href=\"#{}\" data-level=\"{}\">{}</a>", id_slug, &capture[1], header));
     }
     // Add the wrappers to the table of contents
-    post.table_of_contents = format!("<div class=\"table-of-contents\">{}</div>", table_of_contents);
+    post.table_of_contents = format!("<section class=\"table-of-contents\">{}</section>", table_of_contents);
+
 
     // Generate the estimated read time for the post
     let word_count: f32 = content.split(" ").collect::<Vec<&str>>().len() as f32;
@@ -159,31 +162,21 @@ impl Post {
     };
     post.estimated_read_time = format!("{} minute read", humanised_wpm);
 
+
     // Generate HTML metadata for the post
-    post.metadata = format!("
-        <meta name=\"keywords\" content=\"{keywords}\" />
-        <meta name=\"category\" content=\"{category}\" />
-        <meta name=\"topic\" content=\"{subcategory}\" />
-        <meta name=\"revised\" content=\"{published}\" />
-        <meta name=\"date\" content=\"{published}\" />
-        <meta name=\"pagename\" content=\"{title}\" />
-        <meta name=\"title\" content=\"{title}\" />
-        <meta name=\"description\" content=\"{description}\" />
-        <meta name=\"abstract\" content=\"{description}\" />
-        <meta name=\"summary\" content=\"{description}\" />
-        <meta name=\"subtitle\" content=\"{description}\" />
-        <meta name=\"syndication-source\" content=\"{url}\" />
-        <meta name=\"original-source\" content=\"{url}\" />
-        <meta name=\"og:type\" content=\"{genre}\" />
-        <meta name=\"og:title\" content=\"{title}\" />
-        <meta name=\"og:description\" content=\"{description}\" />
-        <meta name=\"og:url\" content=\"{url}\" />
-        <meta name=\"og:image\" content=\"/images/{image}\" />
-        <link rel=\"bookmark\" title=\"{title}\" href=\"{url}\" />
-        <link rel=\"self\" type=\"application/atom+xml\" href=\"{url}\" />
-        <link rel=\"canonical\" href=\"{url}\" />
-      ",
-      // sanitise input strings
+    post.metadata = format!(
+      "<meta name=\"keywords\" content=\"{keywords}\" /><meta name=\"category\" content=\"{category}\" />
+       <meta name=\"topic\" content=\"{subcategory}\" /><meta name=\"revised\" content=\"{published}\" />
+       <meta name=\"date\" content=\"{published}\" /><meta name=\"pagename\" content=\"{title}\" />
+       <meta name=\"title\" content=\"{title}\" /><meta name=\"description\" content=\"{description}\" />
+       <meta name=\"abstract\" content=\"{description}\" /><meta name=\"summary\" content=\"{description}\" />
+       <meta name=\"subtitle\" content=\"{description}\" /><meta name=\"syndication-source\" content=\"{url}\" />
+       <meta name=\"original-source\" content=\"{url}\" /><meta name=\"og:type\" content=\"{genre}\" />
+       <meta name=\"og:title\" content=\"{title}\" /><meta name=\"og:description\" content=\"{description}\" />
+       <meta name=\"og:url\" content=\"{url}\" /><meta name=\"og:image\" content=\"/images/{image}\" />
+       <link rel=\"bookmark\" title=\"{title}\" href=\"{url}\" /><link rel=\"canonical\" href=\"{url}\" />
+       <link rel=\"self\" type=\"application/atom+xml\" href=\"{url}\" />",
+      // sanitise HTML input strings
       title = Lib::escape_html(&post.title),
       description = Lib::escape_html(&post.description),
       category = Lib::escape_html(&post.category),
@@ -193,8 +186,8 @@ impl Post {
       published = Lib::escape_html(&post.published),
       image = Lib::escape_html(&post.image),
       url = Lib::escape_html(&post.url)
-    // minify
-    ).replace("\n        ", "");
+    );
+
 
     // Insert the template path
     post.template_path = file_path.to_string();
