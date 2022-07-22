@@ -2,7 +2,7 @@
 use colored::Colorize;
 use glob::{glob, GlobError};
 use regex::Regex;
-use std::{fs, fs::File, path::Path, path::PathBuf, io::prelude::Write};
+use std::{fs, fs::File, path::Path, path::PathBuf, io::prelude::Write, str::Chars};
 
 /// **Description**:
 ///
@@ -277,4 +277,21 @@ pub fn escape_html(html: &String) -> String {
     result = result.replace(character, replacement);
   }
   result
+}
+
+/// **Description**:
+///
+/// Converts a string to Title Case
+#[allow(dead_code)]
+fn title_case(value: &str) -> String {
+  let splitter: Regex = Regex::new(r"\s+").unwrap();
+
+  splitter.split(value).into_iter().map(| s: &str | -> String {
+    let mut c: Chars = s.chars();
+    match c.next() {
+        None => String::new(),
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str().to_lowercase().as_str(),
+    }
+  })
+  .collect::<Vec<String>>().join(" ")
 }
