@@ -1,4 +1,4 @@
-use crate::antwerp::{Antwerp, Asset, Post, Route};
+use crate::antwerp::{Antwerp, Asset, Post, Route, Routes};
 use tera::Tera;
 
 pub struct Config<'a> {
@@ -14,7 +14,7 @@ pub struct Config<'a> {
   pub post_list: Vec<Post>,
   pub assets: Vec<Asset<'a>>,
   pub routes: Vec<Route<'a>>,
-  pub route_groups: Vec<Route<'a>>
+  pub route_groups: Vec<Routes<'a>>
 }
 
 impl Config<'_> {
