@@ -3,14 +3,14 @@ use tera::Tera;
 
 pub struct Config<'a> {
   pub tera: Tera,
+  pub clean: bool,
+  pub verbose: bool,
   pub url_root: &'a str,
   pub url_post: &'a str,
   pub dir_resources: String,
   pub dir_output: String,
   pub dir_posts: String,
   pub path_render: &'a str,
-  pub clean: bool,
-  pub verbose: bool,
   pub post_list: Vec<Post>,
   pub assets: Vec<Asset<'a>>,
   pub routes: Vec<Route<'a>>,

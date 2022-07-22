@@ -7,59 +7,73 @@ use crate::antwerp::{Antwerp, Asset, Config, Lib, Post, Route, Routes, Template}
 use tera::Context;
 
 pub fn build() {
+  // Create a new Config object
   let template_directory: String = Lib::path::from_cwd("./public/**/*.tera");
   let mut config: Config = Config::new(template_directory);
+
+  // Define basic build config (boolean options, urls, directories)
+  config.clean = true;
+  config.verbose = true;
   config.url_root = "https://logicalbranch.github.io";
   config.url_post = "%url_root/articles/%category/%slug.html";
   config.dir_resources = Lib::path::absolute("./public/");
   config.dir_output = Lib::path::absolute("./dist/");
   config.dir_posts = Lib::path::from_cwd("./public/articles/*/*.tera");
   config.path_render = "articles/%category/%slug.html";
-  config.clean = true;
-  config.verbose = true;
 
+  // Create a sorted post list
   config.post_list = Post::list_sort(&config, | posts_unsorted: Vec<Post> | {
     // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
     let mut sorted: Vec<Vec<Post>> = vec![vec![], vec![], vec![], vec![], vec![]];
-    for article in posts_unsorted {
-      match &*article.genre {
-        "Tutorial" => sorted[0].push(article),
-        "Project" => sorted[1].push(article),
-        "Opinion" => sorted[2].push(article),
-        "Misc" => sorted[3].push(article),
-        "Guide" => sorted[4].push(article),
-        unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, article.template_path)
+    for post in posts_unsorted {
+      match &*post.genre {
+        "Tutorial" => sorted[0].push(post),
+        "Project" => sorted[1].push(post),
+        "Opinion" => sorted[2].push(post),
+        "Misc" => sorted[3].push(post),
+        "Guide" => sorted[4].push(post),
+        unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, post.template_path)
       }
     }
     // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
     for genre in &mut sorted {
-      genre.sort_by_key(| article | article.template_raw.len());
+      genre.sort_by_key(| post | post.template_raw.len());
       genre.reverse();
     }
     sorted.into_iter().flatten().collect::<Vec<Post>>()
   });
 
+  // Define build assets
   config.assets = vec![
+    // Define a list of folders to copy
     Asset::Folder("images/**/*", r"\.(png|jpg)$", false),
     Asset::Folder("scripts/vendor/*.js", r"\.js$", false),
     Asset::Folder("scripts/*.js", r"\.js$", true),
     Asset::Folder("styles/vendor/**/*", r"\.(css|woff|woff2)$", false),
+    // Define a list of files to copy
     Asset::File("sitemap.xml", "sitemap.xml", false),
+    // Define SCSS assets
     Asset::Scss("styles/app.scss", "styles/app.css"),
     Asset::Scss("styles/http.scss", "styles/http.css")
   ];
 
+  // Define routes (/404.html, /articles/index.html, /index.html)
   config.routes = vec![
+    // Define the route for "/404.html"
     Route {
       template: "404.tera",
       output: "404.html",
       context: Context::new()
     },
+
+    // Define the route for "/articles/index.html"
     Route {
       template: "articles/index.tera",
       output: "articles/index.html",
       context: Context::new()
     },
+
+    // Define the route for ".index.html"
     Route {
       template: "index.tera",
       output: "index.html",
@@ -74,7 +88,9 @@ pub fn build() {
     }
   ];
 
+  // Define route groups (for 410 gone, 301 moved, and posts)
   config.route_groups = vec![
+    // Define a route group for (410) gone/deleted routes
     Routes {
       template: "410.tera",
       routes: vec![
@@ -89,6 +105,8 @@ pub fn build() {
         Template { output: "articles/Web_Development/how_to_setup_a_development_server_using_flask/index.html", context: Context::new() },
       ]
     },
+
+    // Define a route group for (301) moved routes
     Routes {
       template: "301.tera",
       routes: {
@@ -110,6 +128,8 @@ pub fn build() {
         ]
       }
     },
+
+    // Define a route group for posts
     Routes {
       template: "articles/article.tera",
       routes: config.post_list.iter().map(| post: &Post | {
@@ -128,5 +148,6 @@ pub fn build() {
     }
   ];
 
+  // Initiate the build
   Antwerp::init(&config);
 }
