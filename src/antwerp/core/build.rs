@@ -1,7 +1,7 @@
 use crate::antwerp::{Antwerp, Config, Lib};
 
 /// Call build methods to handle resources defined in a `Config` object
-pub fn init(config: &Config) {
+pub fn build(config: &Config) {
   // Create dir_output and dir_resources folders if not exists (Issue: #29)
   Lib::ensure_dir(&config.dir_resources);
   Lib::ensure_dir(&config.dir_output);

@@ -1,6 +1,6 @@
 //! Conveniently exposes Antwerp and its tools, allowing for the import of all structs, enums and functions provided by Antwerp under a single `use` declaration.
 //!
-//! This library uses common names for many of its functions. It's advisable to import functions under the `Antwerp` namespace to prevent clogging the current scope with common names such as `init`, `render` or `route`.
+//! This library uses common names for many of its functions. It's advisable to import functions under the `Antwerp` namespace to prevent clogging the current scope with common names such as `build`, `render` or `route`.
 mod handlers;
 mod lib;
 mod core;

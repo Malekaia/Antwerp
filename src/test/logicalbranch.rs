@@ -2,7 +2,7 @@
 //!
 //! **Behaviour**:
 //! * Use `Antwerp::Config` to define resources and declare build behaviour
-//! * Trigger `Antwerp::init` to test the build program using resources for [logicalbranch.github.io](https://logicalbranch.github.io/)
+//! * Trigger `Antwerp::build` to test the build program using resources for [logicalbranch.github.io](https://logicalbranch.github.io/)
 use crate::antwerp::{Antwerp, Asset, Config, Lib, Post, Route, Routes, Template};
 use tera::Context;
 
@@ -149,5 +149,5 @@ pub fn build() {
   ];
 
   // Initiate the build
-  Antwerp::init(&config);
+  Antwerp::build(&config);
 }
