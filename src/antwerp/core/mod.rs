@@ -2,5 +2,5 @@
 mod config;
 mod init;
 
-pub use crate::antwerp::core::config::Config;
-pub use crate::antwerp::core::init::init;
+pub use crate::antwerp::core::config::*;
+pub use crate::antwerp::core::init::*;

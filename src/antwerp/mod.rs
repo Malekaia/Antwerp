@@ -5,8 +5,8 @@ mod handlers;
 mod lib;
 mod core;
 
-pub use crate::antwerp::handlers::{Asset, Post, Route, Routes, Template};
-pub use crate::antwerp::core::Config;
+pub use crate::antwerp::handlers::*;
+pub use crate::antwerp::core::*;
 
 #[allow(non_snake_case)]
 pub mod Antwerp {
