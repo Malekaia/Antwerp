@@ -17,7 +17,7 @@ pub fn clean_build(config: &Config) {
       "{}-{:0>2}-{:0>2}-at-{:0>2}-{:0>2}-{:0>2}",
       date.year(), date.month(), date.day(), date.hour(), date.minute(), date.second()
     );
-    let path_move: &str = &format!("./.antwerp/Trash/{}/*", folder_name);
+    let path_move: &str = &format!("./.antwerp/Trash/{}/", folder_name);
     // Move the directory to .antwerp/Trash
     Lib::ensure_dir("./.antwerp/Trash");
     Lib::ensure_dir(path_move);
