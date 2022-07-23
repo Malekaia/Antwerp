@@ -4,6 +4,7 @@ use tera::Tera;
 pub struct Config<'a> {
   pub tera: Tera,
   pub clean: bool,
+  pub safe_clean: bool,
   pub verbose: bool,
   pub url_root: &'a str,
   pub url_post: &'a str,
@@ -28,6 +29,7 @@ impl Config<'_> {
       dir_posts: String::new(),
       path_render: "",
       clean: false,
+      safe_clean: true,
       verbose: false,
       post_list: vec![],
       assets: vec![],
