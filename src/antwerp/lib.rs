@@ -28,7 +28,7 @@ pub mod path {
          // Get the absolute form of the path
          .canonicalize()
          // Handle errors
-         .expect(&*format!("Error: failed to join \"{}\" with \"{}\"", parent, child))
+         .expect(&format!("Error: failed to join \"{}\" with \"{}\"", parent, child))
          // Add the child path to the parent path
          .join(child)
          // Convert the path into a string
@@ -48,7 +48,7 @@ pub mod path {
          // Get the absolute form of the CWD
          .canonicalize()
          // Handle errors
-         .expect(&*format!("Error: failed to create absolute path from CWD"))
+         .expect(&format!("Error: failed to create absolute path from CWD"))
          // Add the child path to the parent path
          .join(child)
          // Convert the path into a string
@@ -66,7 +66,7 @@ pub mod path {
          // Get the absolute form of the child path
          .canonicalize()
          // Handle errors
-         .expect(&*format!("Error: "))
+         .expect(&format!("Error: "))
          // Convert the path into a string
          .display().to_string()
          // Remove unnecessary relative paths
@@ -180,13 +180,11 @@ pub fn ensure_dir(path: &str) {
 /// * [fs::create_dir](https://doc.rust-lang.org/std/fs/fn.create_dir.html)
 /// * [Path::new(...).exists()](https://doc.rust-lang.org/stable/std/path/struct.Path.html#method.exists)
 pub fn empty_dir(dir_path: &str) {
-  let empty_error: &str = &format!("Failed to empty dir \"{}\"", dir_path);
-  if !self::exists(dir_path) {
-    fs::create_dir(dir_path).expect(empty_error);
-  } else {
+  let empty_error: &str = &format!("Error: failed to empty dir \"{}\"", dir_path);
+  if self::exists(dir_path) {
     fs::remove_dir_all(dir_path).expect(empty_error);
-    fs::create_dir(dir_path).expect(empty_error);
   }
+  fs::create_dir(dir_path).expect(empty_error);
 }
 
 /// **Description**:
