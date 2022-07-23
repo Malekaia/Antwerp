@@ -75,7 +75,6 @@ pub fn assets(config: &Config) {
         }
       },
 
-      // ISSUE: #21
       // Compile SCSS assets
       Asset::Scss(source, destination) => {
         // Create the from and to paths

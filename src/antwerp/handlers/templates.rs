@@ -65,7 +65,6 @@ pub fn render_string(tera: &mut Tera, template_string: &String, context: Context
   }
 }
 
-// ISSUE: #21
 /// **Description**:
 ///
 /// Takes template information (template name, output and context) and renders it to a file
@@ -78,7 +77,6 @@ pub fn route(config: &Config, template_name: &str, output: &str, context: &Conte
   render(&config.tera, template_name, to, context);
 }
 
-// ISSUE: #21
 /// **Description**:
 ///
 /// Takes a Vector containing Template(s) (`Vec<Template>`) and passes each template to `lib::route`
