@@ -5,9 +5,9 @@ edition = "2021"
 description = "A framework for building static sites"
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/LogicalBranch/Antwerp"
-documentation = "https://github.com/LogicalBranch/Antwerp"
-repository = "https://github.com/LogicalBranch/Antwerp"
+homepage = "https://github.com/Malekaia/Antwerp"
+documentation = "https://github.com/Malekaia/Antwerp"
+repository = "https://github.com/Malekaia/Antwerp"
 
 [profile.dev]
 opt-level = 1
