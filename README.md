@@ -11,7 +11,7 @@ This project is available on crates.io as [Antwerp](https://crates.io/crates/ant
 The source code included in this repository is distributed for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/). For the full license, see [LICENSE.md](https://github.com/Malekaia/Antwerp/blob/master/LICENSE.md).
 
 ## Footnotes:
-Antwerp [0.1.0](https://crates.io/crates/antwerp/0.1.0) and Antwerp [0.1.1](https://crates.io/crates/antwerp/0.1.1) are broken, if starting a new project use Antwerp [0.1.2](https://crates.io/crates/antwerp/0.1.2) onwards.
+Antwerp [0.1.0](https://crates.io/crates/antwerp/0.1.0) and Antwerp [0.1.1](https://crates.io/crates/antwerp/0.1.1) are broken, if starting a new project use Antwerp [0.1.3](https://crates.io/crates/antwerp/0.1.3) onwards.
 
 <!-- ## References:
 **Crates**: [Colored](https://crates.io/crates/colored), [Chrono](https://crates.io/crates/chrono), [FS Extra](https://crates.io/crates/fs_extra), [Glob](https://crates.io/crates/glob), [Grass](https://crates.io/crates/grass), [Regex](https://crates.io/crates/regex), [Serde](https://crates.io/crates/serde), [SWC](https://crates.io/crates/swc), [Tera](https://crates.io/crates/tera), [Titlecase](https://crates.io/crates/titlecase)
