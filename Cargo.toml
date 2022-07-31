@@ -1,6 +1,6 @@
 [package]
 name = "antwerp"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "A framework for building static sites"
 license = "MIT"
