@@ -6,8 +6,8 @@ description = "A framework for building static sites"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/Malekaia/Antwerp"
-documentation = "https://github.com/Malekaia/Antwerp"
 repository = "https://github.com/Malekaia/Antwerp"
+documentation = "https://github.com/Malekaia/Antwerp"
 
 [profile.dev]
 opt-level = 1
