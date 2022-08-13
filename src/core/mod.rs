@@ -3,6 +3,6 @@ mod build;
 mod clean;
 mod config;
 
-pub use crate::core::clean::*;
-pub use crate::core::config::*;
-pub use crate::core::build::*;
+pub use crate::core::clean::clean_build;
+pub use crate::core::config::Config;
+pub use crate::core::build::build;
