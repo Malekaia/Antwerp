@@ -1,26 +1,132 @@
 # Antwerp
 ## Overview:
-Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io). It was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is now an open-source framework for building static websites. It is available on crates.io as [Antwerp](https://crates.io/crates/antwerp).
 
-It takes resources specified in a config object and copies assets & directories, compiles SCSS stylesheets, and renders Tera templates to generate a static site in a user-defined folder. Antwerp also supports multiple builds using seperate config instances. For an example of a build config, see [example/main.rs](https://github.com/Malekaia/Antwerp/blob/main/example/main.rs).
+
+Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io). It was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is now an open-source framework for building static blogs. It's available on crates.io as [Antwerp](https://crates.io/crates/antwerp).
+
+Antwerp takes specified resources and copies assets & directories, compiles SCSS stylesheets, and renders Tera templates to generate a static blog in a user-defined folder, it also supports multiple builds using seperate instances.
 
 ## License:
 The source code included in this repository is distributed for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/). For the full license, see [LICENSE.md](https://github.com/Malekaia/Antwerp/blob/master/LICENSE.md).
 
-<!-- ## References:
-**Crates**: [Colored](https://crates.io/crates/colored), [Chrono](https://crates.io/crates/chrono), [FS Extra](https://crates.io/crates/fs_extra), [Glob](https://crates.io/crates/glob), [Grass](https://crates.io/crates/grass), [Regex](https://crates.io/crates/regex), [Serde](https://crates.io/crates/serde), [SWC](https://crates.io/crates/swc), [Tera](https://crates.io/crates/tera), [Titlecase](https://crates.io/crates/titlecase)
+## Example:
+The following build config was used to generate the [malekaia.github.io](https://malekaia.github.io), it's up to date for [version 0.2.0](https://crates.io/crates/antwerp/0.2.0) and is available at [example/main.rs](https://github.com/Malekaia/Antwerp/blob/main/example/main.rs).
 
-**Language**:
-* [The Rust Cheatsheet (by programming-idioms.org)](https://programming-idioms.org/cheatsheet/Rust)
-* [The Rust Reference: Linkage](https://doc.rust-lang.org/reference/linkage.html)
-* [The Cargo Book, Publishing on crates.io](https://doc.rust-lang.org/cargo/reference/publishing.html)
-* [Rust Analyzer](https://rust-analyzer.github.io/)
-* [Observing variable changes](https://users.rust-lang.org/t/observe-changes-of-variable/59069/8)
+```rust
+use antwerp::{Antwerp, Post};
+use tera::Context;
 
-**Other**:
-* [Known Outstanding Issues (Grass Crate)](https://github.com/connorskees/grass/issues/19)
-* [StackOverflow: Why are Rust executables so huge?](https://stackoverflow.com/a/29008355/10415695) -->
-<!-- * [Sitemap generator](https://www.xml-sitemaps.com/) -->
-<!-- * [Google search console](https://search.google.com/search-console/) -->
-<!-- * [Google search console (inspect)](https://search.google.com/search-console/welcome?action=inspect) -->
-<!-- * [Google Trends](https://trends.google.com/trends/?geo=GB) -->
+pub fn build() {
+  // Create a new build instance
+  let mut build: Antwerp = Antwerp::default();
+
+  // Define template data for the tera instance
+  build.tera("./public/**/*.tera");
+
+  // Define config for urls, directories and post paths
+  build.url_root("https://malekaia.github.io");
+  build.url_post("%url_root/articles/%category/%slug.html");
+  build.dir_resources("./public/");
+  build.dir_output("./dist/malekaia.github.io/");
+  build.dir_posts("./public/articles/*/*.tera");
+  build.path_render("articles/%category/%slug.html");
+
+  // NOTE: clean can only occur AFTER `build.dir_output` has been defined
+  build.verbose(true);
+  build.clean(true, true);
+
+  // Copy directories
+  build.folder("images/**/*", r"\.(png|jpg)$", false);
+  build.folder("scripts/vendor/*.js", r"\.js$", false);
+  build.folder("scripts/*.js", r"\.js$", true);
+  build.folder("styles/vendor/**/*", r"\.(css|woff|woff2)$", false);
+
+  // Compile SCSS assets
+  build.scss("styles/app.scss", "styles/app.css");
+  build.scss("styles/http.scss", "styles/http.css");
+
+  // Generate the post list
+  build.post_list(| unsorted: Vec<Post> | -> Vec<Post> {
+    // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
+    let mut sorted: Vec<Vec<Post>> = vec![vec![], vec![], vec![], vec![], vec![]];
+    for post in unsorted {
+      match &*post.genre {
+        "Tutorial" => sorted[0].push(post),
+        "Project" => sorted[1].push(post),
+        "Opinion" => sorted[2].push(post),
+        "Misc" => sorted[3].push(post),
+        "Guide" => sorted[4].push(post),
+        unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, post.template_path)
+      }
+    }
+    // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
+    for genre in &mut sorted {
+      genre.sort_by_key(| post | post.template_raw.len());
+      genre.reverse();
+    }
+    sorted.into_iter().flatten().collect::<Vec<Post>>()
+  });
+
+  // Build "/404.html" template
+  build.route("404.tera", "404.html", &build.empty_context);
+
+  // Build HTTP 410 (deleted) templates
+  for output in [
+    "about/index.html",
+    "contact/index.html",
+    "img/index.html",
+    "info/index.html",
+    "articles/jQuery/how_to_modify_the_jquery_global_without_modifying_jquery/index.html",
+    "articles/jQuery/how_to_scroll_to_an_element_on_click/index.html",
+    "articles/Node.js/brace_expansion_in_shelljs/index.html",
+    "articles/Web_Development/how_to_setup_a_development_server_using_express/index.html",
+    "articles/Web_Development/how_to_setup_a_development_server_using_flask/index.html"
+  ] {
+    build.route("410.tera", output, &build.empty_context);
+  }
+
+  // Build HTTP 301 (moved) templates
+  for [output, redirect] in [
+    ["articles/Bootstrap/how_to_change_the_default_font_in_bootstrap/index.html", "/articles/CSS/how-to-change-the-default-font-in-bootstrap.html"],
+    ["articles/Git/how_to_avoid_overusing_the_git_keyword/index.html", "/articles/Git/how-to-avoid-retyping-the-git-keyword.html"],
+    ["articles/Go/globbing_in_go/index.html", "/articles/Go Lang/globbing-in-go.html"],
+    ["articles/HTML/how_to_open_html_links_in_new_tabs/index.html", "/articles/HTML/how-to-open-html-links-in-new-tabs.html"],
+    ["articles/Node.js/environment_detection_in_javascript/index.html", "/articles/JavaScript/environment-detection-in-javascript.html"],
+    ["articles/Perl/how_to_unzip_an_archive_using_perl/index.html", "/articles/Perl/how-to-call-a-subprocess-in-perl.html"],
+    ["articles/Pip/an_introduction_to_the_pip_package_manager/index.html", "/articles/Python/an-introduction-to-the-pip-package-manager.html"],
+    ["articles/SASS/how_to_extend_parent_selectors_in_sass/index.html", "/articles/CSS/how-to-extend-parent-selectors-in-sass.html"],
+    ["articles/Web_Development/how_to_create_a_development_server_using_http_server/index.html", "/articles/Python/how-to-create-a-development-server-using-http-server.html"]
+  ] {
+    build.route("301.tera", output, &{
+      let mut context: Context = Context::new();
+      context.insert("redirect", redirect);
+      context
+    });
+  }
+
+  // Build "/index.html" template
+  build.route("index.tera", "index.html", &{
+    let mut context: Context = Context::new();
+    context.insert("articles", &build.post_list);
+    context.insert("page_name", "index");
+    context.insert("image", "nasa-yZygONrUBe8-unsplash.jpg");
+    context.insert("artwork_credit", "Manuel Cosentino");
+    context
+  });
+
+  // Build "/articles/index.html" template
+  build.route("articles/index.tera", "articles/index.html", &build.empty_context);
+
+  // Build post templates
+  for post in &build.post_list {
+    build.route("articles/article.tera", &post.render_path, &{
+      let mut context: Context = Context::new();
+      context.insert("articles", &build.post_list);
+      context.insert("article", &post);
+      context.insert("template_rendered", &build.render(&post.template_path, &build.empty_context));
+      context.insert("page_name", "article");
+      context
+    });
+  }
+}
+```
