@@ -1,6 +1,7 @@
-use crate::{Config, Lib};
+use crate::{Antwerp, Lib};
 use regex::Regex;
 use serde::Serialize;
+use std::{path::{Path, PathBuf}, ffi::OsStr};
 use titlecase::titlecase;
 
 /// A struct that simplifies post management. Encapsulates post data and contains methods to extract data from and generate data for posts and collect Vectors containing Post objects for each post.
@@ -92,13 +93,12 @@ impl Post {
   /// * Remove user define statements from the post template
   /// * Generate the `table_of_contents`, `estimated_read_time`, `metadata`, `template_path`, `slug`, `artwork_credit`, `render_path` and `url` for the post
   /// * Fail safe and avoid panicking where possible
-  pub fn properties(config: &Config, file_path: &String) -> Post {
+  pub fn properties(config: &Antwerp, file_path: &String, template_path_roots: &Vec<&str>) -> Post {
     // Create a new Post
     let mut post: Post = Post::new();
     // Read and create a mutable copy the file content
     let file_content: String = Lib::read_file(&file_path);
     let mut content: String = file_content.to_owned();
-
 
     // Regular expression used to extract static data embedded in the template as HTML comments
     let re_define: Regex = Regex::new(r"<!-- define (.*?): (.*?) -->\n").unwrap();
@@ -125,7 +125,6 @@ impl Post {
       }
     }
 
-
     // Create a string for the table of contents
     let mut table_of_contents: String = "".to_string();
     // Regex to extract header tags
@@ -150,7 +149,6 @@ impl Post {
     // Add the wrappers to the table of contents
     post.table_of_contents = format!("<section class=\"table-of-contents\">{}</section>", table_of_contents);
 
-
     // Generate the estimated read time for the post
     let word_count: f32 = content.split(" ").collect::<Vec<&str>>().len() as f32;
     let words_per_minute: f32 = 160f32;
@@ -161,7 +159,6 @@ impl Post {
       "&#119909;".to_string()
     };
     post.estimated_read_time = format!("{} minute read", humanised_wpm);
-
 
     // Generate HTML metadata for the post
     post.metadata = format!(
@@ -188,9 +185,11 @@ impl Post {
       url = Lib::escape_html(&post.url)
     );
 
-
     // Insert the template path
-    post.template_path = file_path.to_string();
+    let template_path: PathBuf = Path::new(file_path).iter()
+                                      .skip_while(| s: &&OsStr | !template_path_roots.contains(&s.to_str().unwrap()))
+                                      .collect();
+    post.template_path = template_path.into_os_string().into_string().unwrap();
     // Add the rendered content to the post
     post.template_raw = content;
     // Create a slug string for the post title
@@ -199,9 +198,9 @@ impl Post {
     post.artwork_credit = titlecase(&post.image[0..post.image.find(":").unwrap()].replace("-", " "));
     // Create the render path string
     let render_path: String = config.path_render.replace("%category", &post.category).replace("%slug", &post.slug);
-    post.render_path = Lib::path::join(&config.dir_output, &render_path);
+    post.render_path = Lib::path_join(&config.dir_output, &render_path);
     // Generate a url for the post
-    post.url = config.path_render.replace("%url_root", config.url_root).replace("%category", &post.category).replace("%slug", &post.slug);
+    post.url = config.path_render.replace("%url_root", &config.url_root).replace("%category", &post.category).replace("%slug", &post.slug);
     post
   }
 
@@ -209,18 +208,29 @@ impl Post {
   ///
   /// **Behaviour**:
   /// * Extract all templates in the config's `dir_tem`
-  pub fn list(config: &Config) -> Vec<Post> {
+  pub fn list(config: &Antwerp) -> Vec<Post> {
+    // Create a list of template roots
+    let mut template_path_roots: Vec<&str> = config.tera.as_ref().unwrap().get_template_names().filter_map(| path: &str | {
+      if path.contains("/") {
+        Some(path.split("/").collect::<Vec<&str>>()[0])
+      } else {
+        None
+      }
+    }).collect::<Vec<&str>>();
+    template_path_roots.sort_unstable();
+    template_path_roots.dedup();
+
     // Walk the given directory
     Lib::walk_dir(&config.dir_posts)
         // Convert into an Iter
         .iter()
         // Generate the properties for each post
-        .map(| file_path: &String | Post::properties(config, file_path))
+        .map(| file_path: &String | Post::properties(config, file_path, &template_path_roots))
         // Collect the Iter as a Vector
         .collect::<Vec<Post>>()
   }
 
-  pub fn list_sort(config: &Config, sorter: fn(Vec<Post>) -> Vec<Post>) -> Vec<Post> {
+  pub fn list_sort(config: &Antwerp, sorter: fn(Vec<Post>) -> Vec<Post>) -> Vec<Post> {
     sorter(Post::list(&config))
   }
 }
