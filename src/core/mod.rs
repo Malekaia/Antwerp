@@ -1,8 +1,6 @@
-//! Exposes Antwerp's `audit`, `build`, `clean` and `config` utilities
+//! Exposes `audit`, `build`, `clean` and `config` utilities
 mod build;
-mod clean;
-mod config;
+mod posts;
 
-pub use crate::core::clean::clean_build;
-pub use crate::core::config::Config;
-pub use crate::core::build::build;
+pub use crate::core::build::Antwerp;
+pub use crate::core::posts::Post;
