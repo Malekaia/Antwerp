@@ -6,7 +6,7 @@ use std::{env, path::{Path, PathBuf}};
 /// **Description**:
 ///
 /// Joins an absolute parent path with a child path
-pub fn join(parent: &str, child: &str) -> String {
+pub fn path_join(parent: &str, child: &str) -> String {
   // Create the path
   Path::new(parent)
       // Get the absolute form of the path
@@ -24,7 +24,7 @@ pub fn join(parent: &str, child: &str) -> String {
 /// **Description**:
 ///
 /// Converts a path into its absolute format using the CWD as its root
-pub fn from_cwd(child: &str) -> String {
+pub fn path_from_cwd(child: &str) -> String {
   // Get the current working directory
   let current_working_directory: PathBuf = env::current_dir().expect("Error: failed to get CWD");
   // Create the path
@@ -44,7 +44,7 @@ pub fn from_cwd(child: &str) -> String {
 /// **Description**:
 ///
 /// Converts a given path to it's absolute verison
-pub fn absolute(child: &str) -> String {
+pub fn path_absolute(child: &str) -> String {
   // Create the path
   Path::new(child)
       // Get the absolute form of the child path
