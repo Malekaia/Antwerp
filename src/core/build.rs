@@ -7,6 +7,7 @@ use fs_extra::dir::{move_dir, CopyOptions};
 
 pub struct Antwerp {
   pub tera: Option<Tera>,
+  pub empty_context: Context,
   pub clean: bool,
   pub safe_clean: bool,
   pub verbose: bool,
@@ -23,8 +24,9 @@ impl Antwerp {
   pub fn default() -> Antwerp {
     Antwerp {
       tera: None,
+      empty_context: Context::new(),
       clean: false,
-      safe_clean: false,
+      safe_clean: true,
       verbose: true,
       url_root: String::new(),
       url_post: String::new(),
@@ -39,6 +41,11 @@ impl Antwerp {
   pub fn clean(&mut self, clean: bool, safe_clean: bool) {
     self.clean = clean;
     self.safe_clean = safe_clean;
+    // Ensure `dir_output` has been defined
+    if self.dir_output.trim().len() < 1 {
+      panic!("Error: Cannot clean build, `dir_output` has not been defined for this build instance.");
+    }
+    // Only clean if requested
     if clean == true {
       // Safe clean by default
       if self.safe_clean == true {
@@ -115,11 +122,8 @@ impl Antwerp {
     self.path_render = path_render.to_string();
   }
 
-  pub fn post_list(&mut self, sorter: Option<fn(Vec<Post>) -> Vec<Post>>) {
-    self.post_list = match sorter {
-      Some(func) => Post::list_sort(&self, func),
-      None => Post::list(&self),
-    };
+  pub fn post_list(&mut self, sorter: fn(Vec<Post>) -> Vec<Post>) {
+    self.post_list = Post::list(&self, sorter)
   }
 
   pub fn folder(&self, source: &str, check: &str, overwrite: bool) {
@@ -175,11 +179,12 @@ impl Antwerp {
     };
   }
 
-  pub fn route(&self, template_name: &str, output: &str, context: Context) {
+  pub fn route(&self, template_name: &str, output: &str, context: &Context) {
     // Create required paths
     let to: &str = &Lib::path_join(&self.dir_output, output);
+    let to_printed: String = to.replace(&self.dir_output, "");
     // Log the update
-    Lib::log(self.verbose, "green", "Render", "static", output);
+    Lib::log(self.verbose, "green", "Render", "static", &to_printed);
     // Try to render the given template
     match self.tera.as_ref().unwrap().render(template_name, &context) {
       // Write the rendered template to the output file
@@ -189,9 +194,8 @@ impl Antwerp {
     };
   }
 
-  pub fn render(&self, template_name: &String, context: Context) -> String {
+  pub fn render(&self, template_name: &String, context: &Context) -> String {
     // Try to render the string and return it (panic on fail)
-    // Try to render the given template
     match self.tera.as_ref().unwrap().render(template_name, &context) {
       // Write the rendered template to the output file
       Ok(result) => result,
