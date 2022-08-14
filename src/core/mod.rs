@@ -1,4 +1,3 @@
-//! Exposes `audit`, `build`, `clean` and `config` utilities
 mod build;
 mod posts;
 
