@@ -2,7 +2,7 @@
 name = "antwerp"
 version = "0.2.0"
 edition = "2021"
-description = "A framework for building static sites"
+description = "A framework for building static blogs"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/Malekaia/Antwerp"
