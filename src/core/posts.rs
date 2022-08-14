@@ -93,7 +93,7 @@ impl Post {
   /// * Remove user define statements from the post template
   /// * Generate the `table_of_contents`, `estimated_read_time`, `metadata`, `template_path`, `slug`, `artwork_credit`, `render_path` and `url` for the post
   /// * Fail safe and avoid panicking where possible
-  pub fn properties(config: &Antwerp, file_path: &String, template_path_roots: &Vec<&str>) -> Post {
+  fn properties(config: &Antwerp, file_path: &String, template_roots: &Vec<&str>) -> Post {
     // Create a new Post
     let mut post: Post = Post::new();
     // Read and create a mutable copy the file content
@@ -187,8 +187,11 @@ impl Post {
 
     // Insert the template path
     let template_path: PathBuf = Path::new(file_path).iter()
-                                      .skip_while(| s: &&OsStr | !template_path_roots.contains(&s.to_str().unwrap()))
-                                      .collect();
+      // Skip all parent directories not included in template paths
+      .skip_while(| s: &&OsStr | !template_roots.contains(&s.to_str().unwrap()))
+      // Collect the paths
+      .collect();
+    // Insert the string path into the appropriate field
     post.template_path = template_path.into_os_string().into_string().unwrap();
     // Add the rendered content to the post
     post.template_raw = content;
@@ -208,29 +211,28 @@ impl Post {
   ///
   /// **Behaviour**:
   /// * Extract all templates in the config's `dir_tem`
-  pub fn list(config: &Antwerp) -> Vec<Post> {
+  pub fn list(config: &Antwerp, sorter: fn(Vec<Post>) -> Vec<Post>) -> Vec<Post> {
     // Create a list of template roots
-    let mut template_path_roots: Vec<&str> = config.tera.as_ref().unwrap().get_template_names().filter_map(| path: &str | {
+    let mut template_roots: Vec<&str> = config.tera.as_ref().unwrap().get_template_names().filter_map(| path: &str | {
       if path.contains("/") {
         Some(path.split("/").collect::<Vec<&str>>()[0])
       } else {
         None
       }
     }).collect::<Vec<&str>>();
-    template_path_roots.sort_unstable();
-    template_path_roots.dedup();
+    template_roots.sort_unstable();
+    template_roots.dedup();
 
     // Walk the given directory
-    Lib::walk_dir(&config.dir_posts)
-        // Convert into an Iter
-        .iter()
-        // Generate the properties for each post
-        .map(| file_path: &String | Post::properties(config, file_path, &template_path_roots))
-        // Collect the Iter as a Vector
-        .collect::<Vec<Post>>()
-  }
+    let post_list: Vec<Post> = Lib::walk_dir(&config.dir_posts)
+      // Convert into an Iter
+      .iter()
+      // Generate the properties for each post
+      .map(| file_path: &String | Post::properties(config, file_path, &template_roots))
+      // Collect the Iter as a Vector
+      .collect::<Vec<Post>>();
 
-  pub fn list_sort(config: &Antwerp, sorter: fn(Vec<Post>) -> Vec<Post>) -> Vec<Post> {
-    sorter(Post::list(&config))
+  // Sort the post list
+    sorter(post_list)
   }
 }
