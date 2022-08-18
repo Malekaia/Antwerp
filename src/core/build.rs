@@ -203,4 +203,11 @@ impl Antwerp {
       Err(error) => panic!("Error: failed to render tera template:\n\n{}", error)
     }
   }
+
+  // Note: this method can be inefficient in a loop due to use of "clone"
+  pub fn render_string(&self, template_name: &String, context: &Context) -> String {
+    let tera: Option<Tera> = self.tera.clone();
+    tera.unwrap().render_str(&template_name, &context)
+      .expect(&format!("Error: failed to render string for \"{template_name}\""))
+  }
 }
