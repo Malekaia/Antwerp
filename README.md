@@ -5,7 +5,7 @@ Antwerp was a closed-source build program for [logicalbranch.github.io](https://
 Antwerp takes specified resources and copies assets & directories, compiles SCSS stylesheets, and renders Tera templates to generate a static website in a user-defined folder, it also supports multiple builds using seperate instances.
 
 ## Demonstration:
-The following build config was used to generate the [malekaia.github.io](https://malekaia.github.io), it's up to date for [version 0.2.0](https://crates.io/crates/antwerp/0.2.0) and is available at [example/main.rs](https://github.com/Malekaia/Antwerp/blob/main/example/main.rs).
+The following build config was used to generate the [malekaia.github.io](https://malekaia.github.io), it's up to date for [version 0.2.1](https://crates.io/crates/antwerp/0.2.1) and is available at [example/main.rs](https://github.com/Malekaia/Antwerp/blob/main/example/main.rs).
 
 ```rust
 use antwerp::{Antwerp, Post};
