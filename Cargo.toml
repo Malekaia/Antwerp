@@ -1,8 +1,8 @@
 [package]
 name = "antwerp"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
-description = "A framework for building static blogs"
+description = "A framework for building static websites"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/Malekaia/Antwerp"
