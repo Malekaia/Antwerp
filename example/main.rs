@@ -18,7 +18,7 @@ pub fn build() {
 
   // NOTE: clean can only occur AFTER `build.dir_output` has been defined
   build.verbose(true);
-  build.clean(true, true);
+  build.clean(true, false);
 
   // Copy directories
   build.folder("images/**/*", r"\.(png|jpg)$", false);
@@ -108,7 +108,7 @@ pub fn build() {
       let mut context: Context = Context::new();
       context.insert("articles", &build.post_list);
       context.insert("article", &post);
-      context.insert("template_rendered", &build.render(&post.template_path, &build.empty_context));
+      context.insert("template_rendered", &build.render_string(&post.template_raw, &build.empty_context));
       context.insert("page_name", "article");
       context
     });
