@@ -78,7 +78,7 @@ impl Antwerp {
   }
 
   pub fn tera(&mut self, template_directory: &str) {
-    let t_d: String = Lib::path_from_cwd(template_directory);
+    let t_d: String = Lib::path_absolute(template_directory);
     // Try to create the tera instance
     let mut tera: Tera = match Tera::parse(&t_d) {
       Ok(tera_object) => tera_object,
@@ -138,7 +138,7 @@ impl Antwerp {
         continue;
       }
       // Create the copy to and from paths
-      let from: &str = &Lib::path_from_cwd(&path_string);
+      let from: &str = &Lib::path_absolute(&path_string);
       let to: &str = &from.replace(&self.dir_resources, &self.dir_output);
       // Log the update
       let overwrite_status: &str = if overwrite == true { "overwrite: false" } else { "overwrite: true" };
