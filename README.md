@@ -5,7 +5,7 @@ Antwerp was a closed-source build program for [logicalbranch.github.io](https://
 Antwerp takes specified resources and copies assets & directories, compiles SCSS stylesheets, and renders Tera templates to generate a static website in a user-defined folder, it also supports multiple builds using seperate instances.
 
 ## Demonstration:
-The following config file was used to generate the [malekaia.github.io](https://malekaia.github.io), it's up to date for [version 0.2.2](https://crates.io/crates/antwerp/0.2.2) and is available at [example/antwerp.toml](https://github.com/Malekaia/Antwerp/blob/main/example/antwerp.toml).
+The following config file ([example/antwerp.toml](https://github.com/Malekaia/Antwerp/blob/main/example/antwerp.toml)) was used to generate the [malekaia.github.io](https://malekaia.github.io) using [Antwerp 0.2.2](https://crates.io/crates/antwerp/0.2.2).
 
 ```toml
 url_root = 'https://malekaia.github.io'
@@ -19,13 +19,13 @@ verbose = true
 clean = true
 preserve = false
 
-[keys]
+[posts]
 image = '/images/manuel-cosentino:n--CMLApjfI-unsplash.jpg'
 author = 'Malekai'
 author_github = 'https://github.com/Malekaia'
 ```
 
-The following build method was used to generate the [malekaia.github.io](https://malekaia.github.io), it's up to date for [version 0.2.2](https://crates.io/crates/antwerp/0.2.2) and is available at [example/main.rs](https://github.com/Malekaia/Antwerp/blob/main/example/main.rs).
+The following build method ([example/main.rs](https://github.com/Malekaia/Antwerp/blob/main/example/main.rs)) was used to generate the [malekaia.github.io](https://malekaia.github.io) using [Antwerp 0.2.2](https://crates.io/crates/antwerp/0.2.2).
 
 ```rust
 use antwerp::{Antwerp, Post};
