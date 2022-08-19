@@ -9,7 +9,7 @@ verbose = true
 clean = true
 preserve = false
 
-[keys]
+[posts]
 image = '/images/manuel-cosentino:n--CMLApjfI-unsplash.jpg'
 author = 'Malekai'
 author_github = 'https://github.com/Malekaia'
