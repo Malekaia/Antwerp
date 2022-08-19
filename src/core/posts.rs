@@ -43,6 +43,7 @@ pub struct Post {
   pub published: String,
   pub image: String,
   pub author: String,
+  pub author_github: String,
   // Generated post data
   pub slug: String,
   pub artwork_credit: String,
@@ -71,6 +72,7 @@ impl Post {
       published: String::new(),
       image: String::new(),
       author: String::new(),
+      author_github: String::new(),
       // Generated post data
       slug: String::new(),
       artwork_credit: String::new(),
@@ -119,6 +121,8 @@ impl Post {
         "published" => post.published = property_value,
         "image" => post.image = property_value,
         "author" => post.author = property_value,
+        "artwork-credit" => post.artwork_credit = property_value,
+        "artwork-github" => post.author_github = property_value,
         unknown_key @ _ => {
           Lib::log(config.verbose, "yellow", "Ignore", "unknown key", &format!("\"{unknown_key}\" in \"{file_path}\""))
         }
@@ -197,8 +201,14 @@ impl Post {
     post.template_raw = content;
     // Create a slug string for the post title
     post.slug = Lib::string_to_slug(&post.title);
-    // Extract the artwork credits
-    post.artwork_credit = titlecase(&post.image[0..post.image.find(":").unwrap()].replace("-", " "));
+    // Extract the artwork credits (Optional user defined "artwork-credits")
+    if post.artwork_credit.len() < 1 {
+      post.artwork_credit = if post.image.contains(":") {
+        titlecase(&post.image[0..post.image.find(":").unwrap()].replace("-", " "))
+      } else {
+        String::new()
+      };
+    }
     // Create the render path string
     let render_path: String = config.path_render.replace("%category", &post.category).replace("%slug", &post.slug);
     post.render_path = Lib::path_join(&config.dir_output, &render_path);
