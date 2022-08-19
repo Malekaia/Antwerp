@@ -1,7 +1,7 @@
 mod helpers;
 mod core;
 
-pub use crate::core::{Antwerp, Post};
+pub use crate::core::{Antwerp, Config, Post};
 
 #[allow(non_snake_case)]
 pub mod Lib {
