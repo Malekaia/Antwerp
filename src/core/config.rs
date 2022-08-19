@@ -1,13 +1,13 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub struct Keys {
+pub struct ConfigPosts {
   pub image: Option<String>,
   pub author: Option<String>,
   pub author_github: Option<String>
 }
 
-impl Keys {
+impl ConfigPosts {
   pub fn image(&self) -> &String {
     self.image.as_ref().unwrap()
   }
@@ -33,7 +33,7 @@ pub struct Config {
   pub verbose: Option<bool>,
   pub clean: Option<bool>,
   pub preserve: Option<bool>,
-  pub keys: Keys
+  pub posts: ConfigPosts
 }
 
 impl Config {
