@@ -3,22 +3,7 @@ use tera::Context;
 
 pub fn build() {
   // Create a new build instance
-  let mut build: Antwerp = Antwerp::default();
-
-  // Define template data for the tera instance
-  build.tera("./public/**/*.tera");
-
-  // Define config for urls, directories and post paths
-  build.url_root("https://malekaia.github.io");
-  build.url_post("%url_root/articles/%category/%slug.html");
-  build.dir_resources("./public/");
-  build.dir_output("./dist/malekaia.github.io/");
-  build.dir_posts("./public/articles/*/*.tera");
-  build.path_render("articles/%category/%slug.html");
-
-  // NOTE: clean can only occur AFTER `build.dir_output` has been defined
-  build.verbose(true);
-  build.clean(true, false);
+  let mut build: Antwerp = Antwerp::new();
 
   // Copy directories
   build.folder("images/**/*", r"\.(png|jpg)$", false);
