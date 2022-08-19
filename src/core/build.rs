@@ -1,11 +1,13 @@
-use crate::{Lib, Post};
+use crate::{Config, Lib, Post};
 use regex::Regex;
 use tera::{Context, Tera};
 use chrono::{Timelike, DateTime, Datelike};
 use chrono::prelude::Local;
 use fs_extra::dir::{move_dir, CopyOptions};
+use toml;
 
 pub struct Antwerp {
+  pub config: Config,
   pub tera: Option<Tera>,
   pub empty_context: Context,
   pub clean: bool,
@@ -23,6 +25,7 @@ pub struct Antwerp {
 impl Antwerp {
   pub fn default() -> Antwerp {
     Antwerp {
+      config: toml::from_str(&Lib::read_file("./antwerp.toml")).unwrap(),
       tera: None,
       empty_context: Context::new(),
       clean: false,
@@ -36,6 +39,29 @@ impl Antwerp {
       path_render: String::new(),
       post_list: vec![]
     }
+  }
+
+  pub fn new() -> Antwerp {
+    let mut build: Antwerp = Antwerp::default();
+
+    if !Lib::exists("./antwerp.toml") {
+      panic!("Error: cannot find antwerp.toml!");
+    }
+
+    let config: Config = toml::from_str(&Lib::read_file("./antwerp.toml")).unwrap();
+
+    build.tera(config.path_tera());
+    build.url_root(config.url_root());
+    build.url_post(config.url_post());
+    build.dir_resources(config.dir_resources());
+    build.dir_output(config.dir_output());
+    build.dir_posts(config.dir_posts());
+    build.path_render(config.path_render());
+
+    build.verbose(config.verbose());
+    build.clean(config.clean(), config.preserve());
+
+    build
   }
 
   pub fn clean(&mut self, clean: bool, safe_clean: bool) {
