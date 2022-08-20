@@ -1,5 +1,6 @@
 use crate::{Antwerp, Lib, Post};
 use regex::Regex;
+use std::{path::{Path, PathBuf}, ffi::OsStr};
 use titlecase::titlecase;
 
 pub fn header_data(build: &Antwerp, post: &mut Post, file_path: &str, file_content: &String, content: &mut String) {
@@ -124,4 +125,30 @@ pub fn metadata(post: &Post) -> String {
     image = Lib::escape_html(&post.image),
     url = Lib::escape_html(&post.url)
   )
+}
+
+pub fn post_url(build: &Antwerp, post: &mut Post) -> String {
+  build.path_render.replace("%url_root", &build.url_root)
+    .replace("%category", &post.category)
+    .replace("%slug", &post.slug)
+}
+
+pub fn render_path(build: &Antwerp, post: &mut Post) -> String {
+  let mut render_path: String = build.path_render.replace("%category", &post.category);
+  render_path = render_path.replace("%slug", &post.slug);
+  Lib::path_join(&build.dir_output, &render_path)
+}
+
+pub fn template_path(build: &Antwerp, file_path: &String) -> String {
+  // Create a list of template roots & sort template roots
+  let template_names = build.tera.as_ref().unwrap().get_template_names();
+  let mut template_roots: Vec<&str> = template_names.filter_map(
+    | path: &str | -> Option<&str> { if path.contains("/") { Some(path.split("/").collect::<Vec<&str>>()[0]) } else { None } }
+  ).collect::<Vec<&str>>();
+  template_roots.sort_unstable();
+  template_roots.dedup();
+  // Create the tera template usable
+  let fn_root = | s: &&OsStr | !template_roots.contains(&&s.to_str().unwrap());
+  let template_path: PathBuf = Path::new(file_path).iter().skip_while(fn_root).collect();
+  template_path.into_os_string().into_string().unwrap()
 }

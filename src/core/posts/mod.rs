@@ -2,8 +2,6 @@ mod support;
 
 use crate::{Antwerp, Lib};
 use serde::Serialize;
-use std::{path::{Path, PathBuf}, ffi::OsStr};
-use support::{header_data, header_defaults, table_of_contents, estimated_read_time, metadata};
 
 #[derive(Serialize)]
 pub struct Post {
@@ -33,7 +31,7 @@ pub struct Post {
 
 impl Post {
   /// Extracts user-defined data from a template to generate and populate a new build of Post
-  fn properties(build: &Antwerp, file_path: &String, template_roots: &Vec<&str>) -> Post {
+  fn properties(build: &Antwerp, file_path: &String) -> Post {
     // Create a new build of Post, where all fields are instantiated to empty strings
     let mut post: Post = Post {
       title: String::new(),
@@ -63,48 +61,33 @@ impl Post {
     let file_content: String = Lib::read_file(&file_path);
     let mut content: String = file_content.to_owned();
     // Extract header data
-    header_data(&build, &mut post, &file_path, &file_content, &mut content);
+    support::header_data(&build, &mut post, &file_path, &file_content, &mut content);
     // Set options to defaults if not exists
-    header_defaults(&build, &mut post);
+    support::header_defaults(&build, &mut post);
     // Generate the table of contents
-    post.table_of_contents = table_of_contents(&file_content, &mut content);
+    post.table_of_contents = support::table_of_contents(&file_content, &mut content);
     // Generate the estimated read time for the post
-    post.estimated_read_time = estimated_read_time(&content);
-    // Generate HTML metadata for the post
-    post.metadata = metadata(&post);
+    post.estimated_read_time = support::estimated_read_time(&content);
     // Add the rendered content to the post
     post.template_raw = content;
+    // Generate HTML metadata for the post
+    post.metadata = support::metadata(&post);
     // Create a slug string for the post title
     post.slug = Lib::string_to_slug(&post.title);
     // Generate a url for the post
-    post.url = build.path_render.replace("%url_root", &build.url_root);
-    post.url = post.url.replace("%category", &post.category);
-    post.url = post.url.replace("%slug", &post.slug);
+    post.url = support::post_url(&build, &mut post);
     // Create the render path string
-    let mut render_path: String = build.path_render.replace("%category", &post.category);
-    render_path = render_path.replace("%slug", &post.slug);
-    post.render_path = Lib::path_join(&build.dir_output, &render_path);
+    post.render_path = support::render_path(&build, &mut post);
     // Generate the template path
-    let fn_root = | s: &&OsStr | !template_roots.contains(&s.to_str().unwrap());
-    let template_path: PathBuf = Path::new(file_path).iter().skip_while(fn_root).collect();
-    post.template_path = template_path.into_os_string().into_string().unwrap();
+    post.template_path = support::template_path(&build, &file_path);
     // Return the posts object
     post
   }
 
-  /// Create a Vector containing Post objects containing information for each post in a specified directory. Use with `PostConfig`
+  /// Create a Vector containing Post objects containing information for each post in a specified directory
   pub fn list(build: &Antwerp, sorter: fn(Vec<Post>) -> Vec<Post>) -> Vec<Post> {
-    // Create a list of template roots & sort template roots
-    let template_names = build.tera.as_ref().unwrap().get_template_names();
-    let mut template_roots: Vec<&str> = template_names.filter_map(
-      | path: &str | -> Option<&str> { if path.contains("/") { Some(path.split("/").collect::<Vec<&str>>()[0]) } else { None } }
-    ).collect::<Vec<&str>>();
-    template_roots.sort_unstable();
-    template_roots.dedup();
-    // Walk the given directory & generate the properties for each post
-    let fn_map = | file_path: &String | Post::properties(build, file_path, &template_roots);
-    let post_list: Vec<Post> = Lib::walk_dir(&build.dir_posts).iter().map(fn_map).collect::<Vec<Post>>();
-    // Sort the post list
-    sorter(post_list)
+    // Walk the given directory & generate a sorted list containing properties for each post
+    let fn_map = | file_path: &String | Post::properties(build, file_path);
+    sorter(Lib::walk_dir(&build.dir_posts).iter().map(fn_map).collect::<Vec<Post>>())
   }
 }
