@@ -24,13 +24,13 @@ pub struct Antwerp {
 
 impl Antwerp {
   pub fn new() -> Antwerp {
-    // Ensure `antwerp.toml` exists
-    if !Lib::exists("./antwerp.toml") {
-      panic!("Error: cannot find antwerp.toml!");
+    // Ensure `Antwerp.toml` exists
+    if !Lib::exists("./Antwerp.toml") {
+      panic!("Error: cannot find Antwerp.toml!");
     }
 
-    // Read config data from `antwerp.toml`
-    let config: Config = TOML::from_str(&Lib::read_file("./antwerp.toml")).unwrap();
+    // Read config data from `Antwerp.toml`
+    let config: Config = TOML::from_str(&Lib::read_file("./Antwerp.toml")).unwrap();
 
     // Create a new instance of Antwerp
     let mut build: Antwerp = Antwerp {

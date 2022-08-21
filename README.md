@@ -5,7 +5,7 @@ Antwerp was a closed-source build program for [logicalbranch.github.io](https://
 Antwerp takes specified resources and copies assets & directories, compiles SCSS stylesheets, and renders Tera templates to generate a static website in a user-defined folder, it also supports multiple builds using seperate instances.
 
 ## Demonstration:
-The following [antwerp.toml](https://github.com/Malekaia/Antwerp/blob/main/example/antwerp.toml) config file ([v0.2.2](https://crates.io/crates/antwerp/0.2.2)) was used to generate [malekaia.github.io](https://malekaia.github.io):
+The following [Antwerp.toml](https://github.com/Malekaia/Antwerp/blob/main/example/Antwerp.toml) config file ([v0.2.2](https://crates.io/crates/antwerp/0.2.2)) was used to generate [malekaia.github.io](https://malekaia.github.io):
 
 ```toml
 url_root = 'https://malekaia.github.io'
