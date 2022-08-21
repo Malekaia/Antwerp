@@ -44,7 +44,7 @@ static HTML_ESCAPABLE: [[&str; 2]; 31] = [
 /// * [HTML Entity List](https://www.freeformatter.com/html-entities.html#misc-html-entities)
 pub fn escape_html(html: &String) -> String {
   // Replace the characters with their matching HTML entities
-  let mut result: String = html.to_owned();
+  let mut result: String = html.clone();
   for [character, replacement] in HTML_ESCAPABLE {
     result = result.replace(character, replacement);
   }

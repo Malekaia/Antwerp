@@ -3,13 +3,13 @@ use regex::Regex;
 use std::{path::{Path, PathBuf}, ffi::OsStr};
 use titlecase::titlecase;
 
-pub fn header_data(build: &Antwerp, post: &mut Post, file_path: &str, file_content: &String, content: &mut String) {
+pub fn header_data(build: &Antwerp, post: &mut Post, file_path: &str, file_content: &mut String) {
   // Regular expression used to extract static data embedded in the template as HTML comments
   let re_define: Regex = Regex::new(r"<!-- define (.*?): (.*?) -->\n").unwrap();
   // Iterate the captures of "re_define"
-  for capture in re_define.captures_iter(&file_content) {
+  for capture in re_define.captures_iter(&file_content.to_owned()) {
     // Remove the definition from the final content
-    *content = content.replace(&capture[0].to_string(), "");
+    *file_content = file_content.replace(&capture[0].to_string(), "");
     // Assign the properties to their matching field in the post object
     let property_value: String = capture[2].to_string();
     match &*capture[1].to_lowercase() {
@@ -61,7 +61,7 @@ pub fn header_defaults(build: &Antwerp, post: &mut Post) {
 }
 
 // FIXME: convert into data structure
-pub fn table_of_contents(file_content: &String, content: &mut String) -> String {
+pub fn table_of_contents(file_content: &mut String) -> String {
   // Create a string for the table of contents
   let mut table_of_contents: String = String::new();
   // Regex to extract header tags
@@ -71,7 +71,7 @@ pub fn table_of_contents(file_content: &String, content: &mut String) -> String 
   // Regex to add an ID to headers
   let re_toc_addition: Regex = Regex::new(r"<h([1-6]{1}) ").unwrap();
   // Iterate captures of "re_toc"
-  for capture in re_toc.captures_iter(&file_content) {
+  for capture in re_toc.captures_iter(&file_content.to_owned()) {
     // Extract the header's content
     let header: String = re_toc_end.replace_all(&capture[4], "").to_string();
     // Create the slug ID for the header
@@ -79,7 +79,7 @@ pub fn table_of_contents(file_content: &String, content: &mut String) -> String 
     // Insert the slug ID into the header
     let html_header: String = re_toc_addition.replace(&capture[0], &format!("<h$1 id=\"{}\" ", id_slug)).to_string();
     // Replace the header with a version that includes an ID
-    *content = content.replace(&capture[0], &html_header);
+    *file_content = file_content.replace(&capture[0], &html_header);
     // Add the current header to the table of contents
     table_of_contents.push_str(&format!("<a href=\"#{}\" data-level=\"{}\">{}</a>", id_slug, &capture[1], header));
   }
@@ -95,7 +95,7 @@ pub fn estimated_read_time(content: &String) -> String {
   let humanised_wpm: String = if word_count > 0f32 {
     (word_count / words_per_minute).ceil().to_string()
   } else {
-    "&#119909;".to_string()
+    String::from("&#119909;")
   };
   // Return the formatted string
   format!("{} minute read", humanised_wpm)

@@ -58,18 +58,17 @@ impl Post {
       template_raw: String::new()
     };
     // Read and create a mutable copy the file content
-    let file_content: String = Lib::read_file(&file_path);
-    let mut content: String = file_content.to_owned();
+    let mut file_content: String = Lib::read_file(&file_path);
     // Extract header data
-    methods::header_data(&build, &mut post, &file_path, &file_content, &mut content);
+    methods::header_data(&build, &mut post, &file_path, &mut file_content);
     // Set options to defaults if not exists
     methods::header_defaults(&build, &mut post);
     // Generate the table of contents
-    post.table_of_contents = methods::table_of_contents(&file_content, &mut content);
+    post.table_of_contents = methods::table_of_contents(&mut file_content);
     // Generate the estimated read time for the post
-    post.estimated_read_time = methods::estimated_read_time(&content);
+    post.estimated_read_time = methods::estimated_read_time(&mut file_content);
     // Add the rendered content to the post
-    post.template_raw = content;
+    post.template_raw = file_content;
     // Generate HTML metadata for the post
     post.metadata = methods::metadata(&post);
     // Create a slug string for the post title

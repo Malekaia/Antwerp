@@ -1,10 +1,10 @@
 mod methods;
+
 use crate::{Config, Lib};
 use chrono::{{Timelike, DateTime, Datelike}, prelude::Local};
 use fs_extra::dir::{move_dir, CopyOptions};
 use tera::{Context, Tera};
 use toml as TOML;
-
 pub struct Antwerp {
   pub config: Config,
   pub tera: Option<Tera>,
@@ -32,7 +32,7 @@ impl Antwerp {
     // Read config data from `antwerp.toml`
     let config: Config = TOML::from_str(&Lib::read_file("./antwerp.toml")).unwrap();
 
-    // FIXME: remove need for `to_owned`
+    // Create a new instance of Antwerp
     let mut build: Antwerp = Antwerp {
       config: config.to_owned(),
       tera: None,
