@@ -1,9 +1,9 @@
 mod author;
 mod posts;
 
-use serde::Deserialize;
 pub use crate::core::config::author::ConfigAuthor;
 pub use crate::core::config::posts::ConfigPosts;
+use serde::Deserialize;
 
 #[derive(Clone, Deserialize)]
 pub struct Config {
