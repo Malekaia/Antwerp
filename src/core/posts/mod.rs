@@ -4,6 +4,20 @@ use crate::{Antwerp, Lib};
 use serde::Serialize;
 
 #[derive(Serialize)]
+pub struct PostHeader {
+  pub image: String,
+  pub credits: String
+}
+
+#[derive(Serialize)]
+pub struct PostAuthor {
+  pub name: String,
+  pub image: String,
+  pub github_url: String,
+  pub github_username: String
+}
+
+#[derive(Serialize)]
 pub struct Post {
   pub title: String,
   pub description: String,
@@ -13,20 +27,16 @@ pub struct Post {
   pub keywords: String,
   pub tags: String,
   pub published: String,
-  pub image: String,
-  pub author: String,
-  pub author_image: String,
-  pub author_github_url: String,
-  pub author_github_username: String,
   pub slug: String,
-  pub artwork_credit: String,
   pub estimated_read_time: String,
   pub metadata: String,
   pub table_of_contents: String,
   pub url: String,
-  pub render_path: String,
-  pub template_path: String,
-  pub template_raw: String
+  pub path_render: String,
+  pub path_template: String,
+  pub template: String,
+  pub header: PostHeader,
+  pub author: PostAuthor
 }
 
 impl Post {
@@ -42,20 +52,24 @@ impl Post {
       keywords: String::new(),
       tags: String::new(),
       published: String::new(),
-      image: String::new(),
-      author: String::new(),
-      author_image: String::new(),
-      author_github_url: String::new(),
-      author_github_username: String::new(),
       slug: String::new(),
-      artwork_credit: String::new(),
       estimated_read_time: String::new(),
       metadata: String::new(),
       table_of_contents: String::new(),
       url: String::new(),
-      render_path: String::new(),
-      template_path: String::new(),
-      template_raw: String::new()
+      path_render: String::new(),
+      path_template: String::new(),
+      template: String::new(),
+      header: PostHeader {
+        image: String::new(),
+        credits: String::new()
+      },
+      author: PostAuthor {
+        name: String::new(),
+        image: String::new(),
+        github_url: String::new(),
+        github_username: String::new()
+      }
     };
     // Read and create a mutable copy the file content
     let mut file_content: String = Lib::read_file(&file_path);
@@ -68,7 +82,7 @@ impl Post {
     // Generate the estimated read time for the post
     post.estimated_read_time = methods::estimated_read_time(&mut file_content);
     // Add the rendered content to the post
-    post.template_raw = file_content;
+    post.template = file_content;
     // Generate HTML metadata for the post
     post.metadata = methods::metadata(&post);
     // Create a slug string for the post title
@@ -76,9 +90,9 @@ impl Post {
     // Generate a url for the post
     post.url = methods::post_url(&build, &mut post);
     // Create the render path string
-    post.render_path = methods::render_path(&build, &mut post);
+    post.path_render = methods::path_render(&build, &mut post);
     // Generate the template path
-    post.template_path = methods::template_path(&build, &file_path);
+    post.path_template = methods::path_template(&build, &file_path);
     // Return the posts object
     post
   }

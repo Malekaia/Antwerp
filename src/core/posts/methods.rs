@@ -21,11 +21,20 @@ pub fn header_data(build: &Antwerp, post: &mut Post, file_path: &str, file_conte
       "keywords" => post.keywords = property_value,
       "tags" => post.tags = property_value,
       "published" => post.published = property_value,
-      "image" => post.image = property_value,
-      "author" => post.author = property_value,
-      "author-image" => post.author_image = property_value,
-      "author-github-url" => post.author_github_url = property_value,
-      "author-github-username" => post.author_github_username = property_value,
+      "slug" => post.slug = property_value,
+      "estimated_read_time" => post.estimated_read_time = property_value,
+      "metadata" => post.metadata = property_value,
+      "table_of_contents" => post.table_of_contents = property_value,
+      "url" => post.url = property_value,
+      "path_render" => post.path_render = property_value,
+      "path_template" => post.path_template = property_value,
+      "template" => post.template = property_value,
+      "header.image" => post.header.image = property_value,
+      "header.credits" => post.header.credits = property_value,
+      "author.name" => post.author.name = property_value,
+      "author.image" => post.author.image = property_value,
+      "author.github_url" => post.author.github_url = property_value,
+      "author.github_username" => post.author.github_username = property_value,
       unknown_key @ _ => {
         Lib::log(build.verbose, "yellow", "Ignore", "unknown key", &format!("\"{unknown_key}\" in \"{file_path}\""))
       }
@@ -35,28 +44,34 @@ pub fn header_data(build: &Antwerp, post: &mut Post, file_path: &str, file_conte
 
 pub fn header_defaults(build: &Antwerp, post: &mut Post) {
   // Set options to defaults if not exists
-  if post.image.len() < 1 {
-    post.image = build.config.posts.image();
+  if post.path_render.len() < 1 {
+    post.path_render = build.config.path_render();
   }
-  if post.author.len() < 1 {
-    post.author = build.config.author.name();
+  if post.header.image.len() < 1 {
+    post.header.image = build.config.header.image();
   }
-  if post.author_image.len() < 1 {
-    post.author_image = build.config.author.image();
-  }
-  if post.author_github_url.len() < 1 {
-    post.author_github_url = build.config.author.github_url();
-  }
-  if post.author_github_username.len() < 1 {
-    post.author_github_username = build.config.author.github_username();
-  }
-  // Extract the artwork credits (Optional user defined "artwork-credits")
-  if post.artwork_credit.len() < 1 {
-    post.artwork_credit = if post.image.contains(":") {
-      titlecase(&post.image[0..post.image.find(":").unwrap()].replace("-", " "))
+  if post.header.credits.len() < 1 {
+    let b_c: String = build.config.header.credits();
+    // Try to extract header credits from image name and defaults or leave an empty string
+    if post.header.image.contains(":") {
+      post.header.credits = titlecase(&post.header.image[0..post.header.image.find(":").unwrap()].replace("-", " "));
+    } else if b_c.len() > 0 {
+      post.header.credits = build.config.header.credits();
     } else {
-      String::new()
-    };
+      post.header.credits = String::new();
+    }
+  }
+  if post.author.name.len() < 1 {
+    post.author.name = build.config.author.name();
+  }
+  if post.author.image.len() < 1 {
+    post.author.image = build.config.author.image();
+  }
+  if post.author.github_url.len() < 1 {
+    post.author.github_url = build.config.author.github_url();
+  }
+  if post.author.github_username.len() < 1 {
+    post.author.github_username = build.config.author.github_username();
   }
 }
 
@@ -122,7 +137,7 @@ pub fn metadata(post: &Post) -> String {
     genre = Lib::escape_html(&post.genre),
     keywords = Lib::escape_html(&post.keywords),
     published = Lib::escape_html(&post.published),
-    image = Lib::escape_html(&post.image),
+    image = Lib::escape_html(&post.header.image),
     url = Lib::escape_html(&post.url)
   )
 }
@@ -133,15 +148,15 @@ pub fn post_url(build: &Antwerp, post: &mut Post) -> String {
     .replace("%slug", &post.slug)
 }
 
-pub fn render_path(build: &Antwerp, post: &mut Post) -> String {
-  let mut render_path: String = build.path_render.replace("%category", &post.category);
-  render_path = render_path.replace("%slug", &post.slug);
-  Lib::path_join(&build.dir_output, &render_path)
+pub fn path_render(build: &Antwerp, post: &mut Post) -> String {
+  let mut path_render: String = build.path_render.replace("%category", &post.category);
+  path_render = path_render.replace("%slug", &post.slug);
+  Lib::path_join(&build.dir_output, &path_render)
 }
 
-pub fn template_path(build: &Antwerp, file_path: &String) -> String {
+pub fn path_template(build: &Antwerp, file_path: &String) -> String {
   // Create the tera template usable
   let fn_skip_while = | s: &&OsStr | !build.tera_root_dirs.contains(&s.to_str().unwrap().to_string());
-  let template_path: PathBuf = Path::new(file_path).iter().skip_while(fn_skip_while).collect();
-  template_path.into_os_string().into_string().unwrap()
+  let path_template: PathBuf = Path::new(file_path).iter().skip_while(fn_skip_while).collect();
+  path_template.into_os_string().into_string().unwrap()
 }

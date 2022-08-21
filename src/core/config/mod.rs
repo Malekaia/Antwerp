@@ -2,8 +2,15 @@ mod author;
 mod posts;
 
 pub use crate::core::config::author::ConfigAuthor;
-pub use crate::core::config::posts::ConfigPosts;
+pub use crate::core::config::posts::ConfigHeader;
 use serde::Deserialize;
+
+pub fn unwrap_string(value: Option<&String>) -> String {
+  match value {
+    None => String::new(),
+    Some(result) => result.to_owned()
+  }
+}
 
 #[derive(Clone, Deserialize)]
 pub struct Config {
@@ -17,48 +24,57 @@ pub struct Config {
   pub verbose: Option<bool>,
   pub clean: Option<bool>,
   pub preserve: Option<bool>,
-  pub posts: ConfigPosts,
+  pub header: ConfigHeader,
   pub author: ConfigAuthor
 }
 
 impl Config {
   pub fn url_root(&self) -> String {
-    self.url_root.as_ref().unwrap().to_string()
+    unwrap_string(self.url_root.as_ref())
   }
 
   pub fn url_post(&self) -> String {
-    self.url_post.as_ref().unwrap().to_string()
+    unwrap_string(self.url_post.as_ref())
   }
 
   pub fn path_render(&self) -> String {
-    self.path_render.as_ref().unwrap().to_string()
+    unwrap_string(self.path_render.as_ref())
   }
 
   pub fn dir_resources(&self) -> String {
-    self.dir_resources.as_ref().unwrap().to_string()
+    unwrap_string(self.dir_resources.as_ref())
   }
 
   pub fn dir_output(&self) -> String {
-    self.dir_output.as_ref().unwrap().to_string()
+    unwrap_string(self.dir_output.as_ref())
   }
 
   pub fn dir_templates(&self) -> String {
-    self.dir_templates.as_ref().unwrap().to_string()
+    unwrap_string(self.dir_templates.as_ref())
   }
 
   pub fn dir_posts(&self) -> String {
-    self.dir_posts.as_ref().unwrap().to_string()
+    unwrap_string(self.dir_posts.as_ref())
   }
 
   pub fn verbose(&self) -> bool {
-    self.verbose.unwrap()
+    match self.verbose {
+      None => true,
+      Some(result) => result
+    }
   }
 
   pub fn clean(&self) -> bool {
-    self.clean.unwrap()
+    match self.clean {
+      None => true,
+      Some(result) => result
+    }
   }
 
   pub fn preserve(&self) -> bool {
-    self.preserve.unwrap()
+    match self.preserve {
+      None => true,
+      Some(result) => result
+    }
   }
 }
