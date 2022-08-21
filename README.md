@@ -1,6 +1,6 @@
 # Antwerp
 ## Overview:
-Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io). It was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is now an open-source framework for building static blogs. It's available on crates.io as [Antwerp](https://crates.io/crates/antwerp).
+Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io). It was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is now an open-source framework for building static websites. It's available on crates.io as [Antwerp](https://crates.io/crates/antwerp).
 
 Antwerp takes specified resources and copies assets & directories, compiles SCSS stylesheets, and renders Tera templates to generate a static website in a user-defined folder, it also supports multiple builds using seperate instances.
 
