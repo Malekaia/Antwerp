@@ -10,19 +10,23 @@ The following [Antwerp.toml](https://github.com/Malekaia/Antwerp/blob/main/examp
 ```toml
 url_root = 'https://malekaia.github.io'
 url_post = '%url_root/articles/%category/%slug.html'
-path_tera = './public/**/*.tera'
 path_render = 'articles/%category/%slug.html'
 dir_resources = './public/'
 dir_output = './dist/malekaia.github.io/'
+dir_templates = './public/**/*.tera'
 dir_posts = './public/articles/*/*.tera'
 verbose = true
 clean = true
 preserve = false
 
-[posts]
-image = '/images/manuel-cosentino:n--CMLApjfI-unsplash.jpg'
-author = 'Malekai'
-author_github = 'https://github.com/Malekaia'
+[header]
+image="/images/manuel-cosentino:n--CMLApjfI-unsplash.jpg"
+
+[author]
+name="Malekai"
+image='/images/favicon.png'
+github_url='https://github.com/Malekaia'
+github_username='@Malekaia'
 ```
 
 Using the following build method (available at [example/main.rs](https://github.com/Malekaia/Antwerp/blob/main/example/main.rs)):
@@ -33,7 +37,29 @@ use tera::Context;
 
 pub fn build() {
   // Create a new build instance
-  let mut build: Antwerp = Antwerp::new();
+  let build: Antwerp = Antwerp::new();
+
+  // Create the post list
+  let post_list: Vec<Post> = build.post_list(| unsorted: Vec<Post> | -> Vec<Post> {
+    // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
+    let mut sorted: Vec<Vec<Post>> = vec![vec![], vec![], vec![], vec![], vec![]];
+    for post in unsorted {
+      match &*post.genre {
+        "Tutorial" => sorted[0].push(post),
+        "Project" => sorted[1].push(post),
+        "Opinion" => sorted[2].push(post),
+        "Misc" => sorted[3].push(post),
+        "Guide" => sorted[4].push(post),
+        unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, post.path_template)
+      }
+    }
+    // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
+    for genre in &mut sorted {
+      genre.sort_by_key(| post | post.template.len());
+      genre.reverse();
+    }
+    sorted.into_iter().flatten().collect::<Vec<Post>>()
+  });
 
   // Copy directories
   build.folder("images/**/*", r"\.(png|jpg)$", false);
@@ -45,37 +71,12 @@ pub fn build() {
   build.scss("styles/app.scss", "styles/app.css");
   build.scss("styles/http.scss", "styles/http.css");
 
-  // Generate the post list
-  build.post_list(| unsorted: Vec<Post> | -> Vec<Post> {
-    // sort into vec[vec[tutorial], vec[project], vec[opinion], vec[misc], vec[guide]]
-    let mut sorted: Vec<Vec<Post>> = vec![vec![], vec![], vec![], vec![], vec![]];
-    for post in unsorted {
-      match &*post.genre {
-        "Tutorial" => sorted[0].push(post),
-        "Project" => sorted[1].push(post),
-        "Opinion" => sorted[2].push(post),
-        "Misc" => sorted[3].push(post),
-        "Guide" => sorted[4].push(post),
-        unknown_genre @ _ => panic!("Ignore (unknown genre): {} in {}", unknown_genre, post.template_path)
-      }
-    }
-    // vec[...tutorial, ...project, ...opinion, ...misc, ...guide]
-    for genre in &mut sorted {
-      genre.sort_by_key(| post | post.template_raw.len());
-      genre.reverse();
-    }
-    sorted.into_iter().flatten().collect::<Vec<Post>>()
-  });
-
   // Build "/404.html" template
   build.route("404.tera", "404.html", &build.empty_context);
 
   // Build HTTP 410 (deleted) templates
   for output in [
-    "about/index.html",
-    "contact/index.html",
-    "img/index.html",
-    "info/index.html",
+    "about/index.html", "contact/index.html", "img/index.html", "info/index.html",
     "articles/jQuery/how_to_modify_the_jquery_global_without_modifying_jquery/index.html",
     "articles/jQuery/how_to_scroll_to_an_element_on_click/index.html",
     "articles/Node.js/brace_expansion_in_shelljs/index.html",
@@ -107,10 +108,13 @@ pub fn build() {
   // Build "/index.html" template
   build.route("index.tera", "index.html", &{
     let mut context: Context = Context::new();
-    context.insert("articles", &build.post_list);
-    context.insert("page_name", "index");
-    context.insert("image", "nasa-yZygONrUBe8-unsplash.jpg");
-    context.insert("artwork_credit", "Manuel Cosentino");
+    // FIXME: change names
+    context.insert("articles", &post_list);
+    context.insert("template_name", "index");
+    context.insert("header_image", "nasa-yZygONrUBe8-unsplash.jpg");
+    context.insert("header_credits", "Manuel Cosentino");
+    context.insert("github_url", &build.config.author.github_url);
+    context.insert("github_username", &build.config.author.github_username);
     context
   });
 
@@ -118,13 +122,13 @@ pub fn build() {
   build.route("articles/index.tera", "articles/index.html", &build.empty_context);
 
   // Build post templates
-  for post in &build.post_list {
-    build.route("articles/article.tera", &post.render_path, &{
+  for post in &post_list {
+    build.route("articles/article.tera", &post.path_render, &{
       let mut context: Context = Context::new();
-      context.insert("articles", &build.post_list);
+      context.insert("articles", &post_list);
       context.insert("article", &post);
-      context.insert("template_rendered", &build.render_string(&post.template_raw, &build.empty_context));
-      context.insert("page_name", "article");
+      context.insert("template", &build.render_string(&post.template, &build.empty_context));
+      context.insert("template_name", "article");
       context
     });
   }
