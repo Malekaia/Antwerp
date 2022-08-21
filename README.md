@@ -108,7 +108,6 @@ pub fn build() {
   // Build "/index.html" template
   build.route("index.tera", "index.html", &{
     let mut context: Context = Context::new();
-    // FIXME: change names
     context.insert("articles", &post_list);
     context.insert("template_name", "index");
     context.insert("header_image", "nasa-yZygONrUBe8-unsplash.jpg");

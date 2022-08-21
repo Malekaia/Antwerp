@@ -68,7 +68,6 @@ pub fn header_defaults(build: &Antwerp, post: &mut Post) {
   }
 }
 
-// FIXME: convert into data structure
 pub fn table_of_contents(file_content: &mut String) -> Vec<TableOfContentsListItem> {
   // Generate the table of contents
   let mut table_of_contents: Vec<TableOfContentsListItem> = vec![];
