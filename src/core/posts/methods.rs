@@ -2,6 +2,7 @@ use crate::{Antwerp, Lib, Post};
 use regex::Regex;
 use std::{path::{Path, PathBuf}, ffi::OsStr};
 use titlecase::titlecase;
+use crate::core::posts::TableOfContentsListItem;
 
 pub fn header_data(build: &Antwerp, post: &mut Post, file_path: &str, file_content: &mut String) {
   // Regular expression used to extract static data embedded in the template as HTML comments
@@ -21,14 +22,6 @@ pub fn header_data(build: &Antwerp, post: &mut Post, file_path: &str, file_conte
       "keywords" => post.keywords = property_value,
       "tags" => post.tags = property_value,
       "published" => post.published = property_value,
-      "slug" => post.slug = property_value,
-      "estimated_read_time" => post.estimated_read_time = property_value,
-      "metadata" => post.metadata = property_value,
-      "table_of_contents" => post.table_of_contents = property_value,
-      "url" => post.url = property_value,
-      "path_render" => post.path_render = property_value,
-      "path_template" => post.path_template = property_value,
-      "template" => post.template = property_value,
       "header.image" => post.header.image = property_value,
       "header.credits" => post.header.credits = property_value,
       "author.name" => post.author.name = property_value,
@@ -76,9 +69,9 @@ pub fn header_defaults(build: &Antwerp, post: &mut Post) {
 }
 
 // FIXME: convert into data structure
-pub fn table_of_contents(file_content: &mut String) -> String {
-  // Create a string for the table of contents
-  let mut table_of_contents: String = String::new();
+pub fn table_of_contents(file_content: &mut String) -> Vec<TableOfContentsListItem> {
+  // Generate the table of contents
+  let mut table_of_contents: Vec<TableOfContentsListItem> = vec![];
   // Regex to extract header tags
   let re_toc: Regex = Regex::new("<h([1-6]{1})(.*?c)lass=[\"\']text-title[\"\'](.*?>|>)(.*?)</h([1-6]{1})>").unwrap();
   // Regex to extract non alpha-numeric header ends
@@ -96,10 +89,10 @@ pub fn table_of_contents(file_content: &mut String) -> String {
     // Replace the header with a version that includes an ID
     *file_content = file_content.replace(&capture[0], &html_header);
     // Add the current header to the table of contents
-    table_of_contents.push_str(&format!("<a href=\"#{}\" data-level=\"{}\">{}</a>", id_slug, &capture[1], header));
+    table_of_contents.push(TableOfContentsListItem { href: format!("#{id_slug}"), level: capture[1].to_string(), text: header });
   }
-  // Add the wrappers to the table of contents
-  format!("<section class=\"table-of-contents\">{}</section>", table_of_contents)
+  // Return the table of contents
+  table_of_contents
 }
 
 pub fn estimated_read_time(content: &String) -> String {

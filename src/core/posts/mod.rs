@@ -18,6 +18,13 @@ pub struct PostAuthor {
 }
 
 #[derive(Serialize)]
+pub struct TableOfContentsListItem {
+  pub href: String,
+  pub level: String,
+  pub text: String
+}
+
+#[derive(Serialize)]
 pub struct Post {
   pub title: String,
   pub description: String,
@@ -30,11 +37,11 @@ pub struct Post {
   pub slug: String,
   pub estimated_read_time: String,
   pub metadata: String,
-  pub table_of_contents: String,
   pub url: String,
   pub path_render: String,
   pub path_template: String,
   pub template: String,
+  pub table_of_contents: Vec<TableOfContentsListItem>,
   pub header: PostHeader,
   pub author: PostAuthor
 }
@@ -55,11 +62,11 @@ impl Post {
       slug: String::new(),
       estimated_read_time: String::new(),
       metadata: String::new(),
-      table_of_contents: String::new(),
       url: String::new(),
       path_render: String::new(),
       path_template: String::new(),
       template: String::new(),
+      table_of_contents: vec![],
       header: PostHeader {
         image: String::new(),
         credits: String::new()
