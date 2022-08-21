@@ -1,15 +1,19 @@
 url_root = 'https://malekaia.github.io'
 url_post = '%url_root/articles/%category/%slug.html'
-path_tera = './public/**/*.tera'
 path_render = 'articles/%category/%slug.html'
 dir_resources = './public/'
 dir_output = './dist/malekaia.github.io/'
+dir_templates = './public/**/*.tera'
 dir_posts = './public/articles/*/*.tera'
 verbose = true
 clean = true
 preserve = false
 
-[posts]
-image = '/images/manuel-cosentino:n--CMLApjfI-unsplash.jpg'
-author = 'Malekai'
-author_github = 'https://github.com/Malekaia'
+[header]
+image="/images/manuel-cosentino:n--CMLApjfI-unsplash.jpg"
+
+[author]
+name="Malekai"
+image='/images/favicon.png'
+github_url='https://github.com/Malekaia'
+github_username='@Malekaia'
