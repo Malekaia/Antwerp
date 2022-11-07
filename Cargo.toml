@@ -1,5 +1,5 @@
 [package]
-name = "marcus"
+name = "antwerp"
 version = "0.1.0"
 edition = "2021"
 description = "A web framework for Github Pages based on Markdown"
