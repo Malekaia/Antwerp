@@ -6,7 +6,6 @@ description = "A web framework for Github Pages based on Markdown"
 license = "MIT"
 readme = "README.md"
 
-
 [profile.dev]
 opt-level = 1
 
