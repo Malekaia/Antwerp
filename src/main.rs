@@ -1,6 +1,8 @@
-mod methods;
+#[macro_use]
+extern crate lazy_static;
 mod fileio;
+mod template;
 
 fn main() {
-  println!("{:#?}", methods::get_templates());
+  println!("{:#?}", template::list());
 }
