@@ -1,5 +1,5 @@
 use glob::glob;
-use std::fs;
+use std::{fs, path::Path};
 
 pub fn read_file(file_path: &str) -> String {
   match fs::read_to_string(file_path) {
@@ -8,7 +8,6 @@ pub fn read_file(file_path: &str) -> String {
   }
 }
 
-#[allow(unused)]
 pub fn write_file(file_path: &str, contents: String) {
   fs::write(file_path, contents).expect("WriteError: failed to write to file");
 }
@@ -19,4 +18,8 @@ pub fn walk(path: &str) -> impl Iterator<Item = String> {
     .map(| entry |
       entry.expect("GlobError: failed to glob entry").display().to_string()
     )
+}
+
+pub fn ensure_dir(path: &Path) {
+  fs::create_dir_all(path).expect("Error: failed to create directory");
 }
