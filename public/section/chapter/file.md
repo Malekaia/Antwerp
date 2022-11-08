@@ -1,8 +1,6 @@
 {% extends "base.html" %}
-{% block title %}
-  This is the title
-{% endblock title %}
+{% block title %}This is the title{% endblock title %}
 
-{% block template %}
+{% block body %}
   This is the template
-{% endblock template %}
+{% endblock body %}
