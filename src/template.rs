@@ -1,7 +1,6 @@
 use crate::fileio;
-use marcus;
 use regex::Regex;
-use std::{env::current_dir, ffi::OsString, fs::{read_dir, DirEntry}, collections::HashMap, io, path::{PathBuf, Ancestors}};
+use std::{env::current_dir, ffi::OsString, fs::{read_dir, DirEntry}, collections::HashMap, io, path::{PathBuf, Ancestors, Path}};
 
 /// Stores block information
 #[derive(Debug)]
@@ -15,7 +14,7 @@ pub struct Block {
 pub struct Template {
   pub path_template: PathBuf,
   pub path_output: PathBuf,
-  pub parent: String,
+  pub path_parent: PathBuf,
   pub blocks: Blocks
 }
 
@@ -31,6 +30,8 @@ lazy_static! {
   static ref RE_EXTENDS: Regex = Regex::new(r#"\{% extends "(.*?)" %\}"#).unwrap();
   /// Regular expression for "block" statements
   static ref RE_BLOCK: Regex = Regex::new(r#"\{% block (.*?) %\}"#).unwrap();
+  /// Regular expression for extension replacements
+  static ref RE_MD_EXTENSION: Regex = Regex::new(r".md$").unwrap();
 }
 
 /// Find the absolute root directory path of a project as it stands relative to the location of the nearest Cargo.lock file
@@ -43,7 +44,7 @@ lazy_static! {
 ///     Err(e) => println!("Error obtaining project root {:?}", e)
 /// };
 /// ```
-fn project_root() -> io::Result<PathBuf> {
+pub fn project_root() -> io::Result<PathBuf> {
   let path: PathBuf = current_dir()?;
   let mut path_ancestors: Ancestors = path.as_path().ancestors();
   while let Some(p) = path_ancestors.next() {
@@ -92,7 +93,7 @@ fn extract_parent_blocks(content: &String) -> (String, Blocks) {
     // Insert the block name and it's compiled HTML into the blocks store
     blocks.insert(block_name.to_string(), Block {
       outer: content[outer_start..outer_end].to_string(),
-      inner: marcus::to_string(content[inner_start..inner_end].to_string())
+      inner: content[inner_start..inner_end].to_string()
     });
   }
 
@@ -118,11 +119,14 @@ pub fn list() -> Templates {
     .map(| file_path: String | -> Template {
       // Get the absolute template and output paths
       let path_template: PathBuf = path_root.join(&file_path);
-      let path_output: PathBuf = path_dist.join(path_template.strip_prefix(&path_public).expect("Error: failed to strip path prefix"));
+      let path_output_pb: PathBuf = path_dist.join(path_template.strip_prefix(&path_public).expect("Error: failed to strip path prefix"));
+      let path_output: PathBuf = Path::new(&RE_MD_EXTENSION.replace(path_output_pb.to_str().unwrap(), ".html").to_string()).to_path_buf();
       // Read the template's file content and validate the templates
       let (parent, blocks): (String, Blocks) = extract_parent_blocks(&fileio::read_file(&file_path));
+      // Create the absolute parent path
+      let path_parent: PathBuf = path_public.join(parent);
       // Return the template struct
-      Template { path_template, path_output, parent, blocks }
+      Template { path_template, path_output, path_parent, blocks }
     })
     // Return the iterator as a vector
     .collect::<Templates>()

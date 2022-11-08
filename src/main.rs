@@ -1,8 +1,9 @@
 #[macro_use]
 extern crate lazy_static;
+mod build;
 mod fileio;
 mod template;
 
 fn main() {
-  println!("{:#?}", template::list());
+  build::templates(template::list());
 }
