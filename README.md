@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Antwerp
 ## Overview:
 Antwerp was a closed-source build program for [logicalbranch.github.io](https://logicalbranch.github.io). It was ported from [Node.js](https://nodejs.org/en/) & [Pug](https://pugjs.org/api/getting-started.html) to [Rust](https://www.rust-lang.org/) & [Tera](https://tera.netlify.app/) and is now an open-source framework for building static websites. It's available on crates.io as [Antwerp](https://crates.io/crates/antwerp).
@@ -136,3 +137,7 @@ pub fn build() {
 
 ## License:
 The source code included in this repository is distributed for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/). For the full license, see [LICENSE.md](https://github.com/Malekaia/Antwerp/blob/master/LICENSE.md).
+=======
+## Antwerp:
+Attempting to simplify the existing [Antwerp](https://crates.io/crates/antwerp) crate using the [Marcus](https://crates.io/crates/marcus) MD to HTML converter.
+>>>>>>> 889c16ee7fa6c9f29930dfc24eebbe4dc3ba5bac
