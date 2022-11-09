@@ -1,4 +1,4 @@
-## Antwerp ![](https://github.com/Malekaia/Antwerp/actions/workflows/build/badge.svg):
+## Antwerp ![](https://github.com/Malekaia/Antwerp/actions/workflows/build.yaml/badge.svg):
 [Antwerp](https://crates.io/crates/antwerp) is a framework for Github Pages based on the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser. Antwerp converts MarkDown templates in `public/` into HTML and writes them to `dist/`.
 
 ## Demonstration:
