@@ -15,7 +15,7 @@ pub fn templates(templates: Templates) {
   // Iterate the templates
   for template in templates {
     // Create the directory for the output `.html` file
-    fileio::ensure_dir(&Path::new(&template.path_output).parent().unwrap());
+    fileio::ensure_dir(Path::new(&template.path_output).parent().unwrap().to_str().unwrap());
     // Get the contents of the parent template
     let template_content: String = fileio::read_file(&template.path_parent.to_str().unwrap());
     let mut html: String = template_content.to_owned();

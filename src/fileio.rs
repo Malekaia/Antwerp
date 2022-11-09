@@ -1,5 +1,5 @@
 use glob::glob;
-use std::{fs, path::Path};
+use std::fs;
 
 pub fn read_file(file_path: &str) -> String {
   match fs::read_to_string(file_path) {
@@ -20,6 +20,6 @@ pub fn walk(path: &str) -> impl Iterator<Item = String> {
     )
 }
 
-pub fn ensure_dir(path: &Path) {
+pub fn ensure_dir(path: &str) {
   fs::create_dir_all(path).expect("Error: failed to create directory");
 }
