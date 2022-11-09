@@ -1,39 +1,18 @@
 [package]
 name = "antwerp"
-<<<<<<< HEAD
-version = "0.2.4"
+version = "0.3.0"
 edition = "2021"
-description = "A framework for building static websites"
+description = "A framework for Github Pages based on the Marcus MarkDown to HTML parser"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/Malekaia/Antwerp"
 repository = "https://github.com/Malekaia/Antwerp"
 documentation = "https://github.com/Malekaia/Antwerp"
-=======
-version = "0.1.0"
-edition = "2021"
-description = "A web framework for Github Pages based on Markdown"
-license = "MIT"
-readme = "README.md"
->>>>>>> 889c16ee7fa6c9f29930dfc24eebbe4dc3ba5bac
 
 [profile.dev]
 opt-level = 1
 
 [dependencies]
-<<<<<<< HEAD
-chrono="0.4.19"
-colored = "2.0.0"
-fs_extra="1.2.0"
 glob = "0.3.0"
-grass = "0.11.0"
-regex = "1.6.0"
-serde = { version = "1.0.139", features = ["derive"] }
-tera = "1.16.0"
-titlecase = "2.0.0"
-toml = "0.5.9"
-=======
-glob = "0.3.0"
-marcus = { git = "https://github.com/Malekaia/Marcus" }
+marcus = "0.1.0"
 regex = "1.7.0"
->>>>>>> 889c16ee7fa6c9f29930dfc24eebbe4dc3ba5bac

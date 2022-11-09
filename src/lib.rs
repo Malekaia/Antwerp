@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-mod helpers;
-mod core;
-
-pub use crate::core::{Antwerp, Config, Post};
-
-#[allow(non_snake_case)]
-pub mod Lib {
-  pub use crate::helpers::{exists, read_file, write_file, copy_file, ensure_dir, empty_dir, walk_dir};
-  pub use crate::helpers::log;
-  pub use crate::helpers::{path_join, path_absolute};
-  pub use crate::helpers::{string_to_slug, escape_html};
-=======
 use glob::{glob, GlobError};
 use regex::Regex;
 use std::{env::current_dir, collections::HashMap, ffi::OsString, fs, io, path::{PathBuf, Ancestors}};
@@ -173,5 +160,4 @@ mod tests {
   fn sample() {
     build();
   }
->>>>>>> 889c16ee7fa6c9f29930dfc24eebbe4dc3ba5bac
 }
