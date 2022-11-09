@@ -1,3 +1,8 @@
+//! Antwerp:
+//!
+//! [Antwerp](https://crates.io/crates/antwerp) is a framework for Github Pages based on the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser.
+//! Converts MarkDown templates in `public/` into HTML and writes them to `dist/`.
+
 use glob::{glob, GlobError};
 use regex::Regex;
 use std::{env::current_dir, collections::HashMap, ffi::OsString, fs, io, path::{PathBuf, Ancestors}};
@@ -19,8 +24,8 @@ struct RegExp {
 ///
 /// ```rust
 /// match project_root::project_root() {
-///     Ok(p) => println!("Current project root is {:?}", p),
-///     Err(e) => println!("Error obtaining project root {:?}", e)
+///   Ok(p) => println!("Current project root is {:?}", p),
+///   Err(e) => println!("Error obtaining project root {:?}", e)
 /// };
 /// ```
 fn project_root() -> io::Result<PathBuf> {
