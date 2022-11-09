@@ -1,5 +1,5 @@
 ## Antwerp:
-[Antwerp](https://crates.io/crates/antwerp) is a framework for Github Pages based on the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser. Converts MarkDown templates in `public/` into HTML and writes them to `dist/`.
+[Antwerp](https://crates.io/crates/antwerp) is a framework for Github Pages based on the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser. Antwerp converts MarkDown templates in `public/` into HTML and writes them to `dist/`.
 
 ## Demonstration:
 
@@ -11,9 +11,9 @@ fn main() {
 }
 ```
 
-### Input (`public/`):
+### Input files:
 
-`public/base.html`:
+Base template (`public/base.html`):
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +29,7 @@ fn main() {
 </html>
 ```
 
-`public/index.md`:
+Homepage (`public/index.md`):
 ```markdown
 {% extends "base.html" %}
 
@@ -42,7 +42,7 @@ This is the template, it contains a link to [a file](/section/chapter/file.html)
 {% endblock body %}
 ```
 
-`public/section/chapter/file.md`:
+Sample file (`public/section/chapter/file.md`):
 ```markdown
 {% extends "base.html" %}
 {% block title %}This is the title{% endblock title %}
@@ -66,9 +66,9 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 {% endblock body %}
 ```
 
-### Input (`dist/`):
+### Output files:
 
-`dist/index.html`:
+Homepage (`dist/index.html`):
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -86,7 +86,7 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 </html>
 ```
 
-`dist/section/chapter/file.md`:
+Sample file (`dist/section/chapter/file.md`):
 ```html
 <!DOCTYPE html>
 <html lang="en">
