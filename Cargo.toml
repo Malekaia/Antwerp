@@ -13,4 +13,3 @@ opt-level = 1
 glob = "0.3.0"
 marcus = { git = "https://github.com/Malekaia/Marcus" }
 regex = "1.7.0"
-lazy_static = "1.4.0"
