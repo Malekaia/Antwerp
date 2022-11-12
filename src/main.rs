@@ -5,7 +5,7 @@
 
 use glob::{glob, GlobError};
 use regex::Regex;
-use std::{env::current_dir, collections::HashMap, ffi::OsString, fs, io, path::{PathBuf, Ancestors}};
+use std::{env::current_dir, collections::HashMap, ffi::OsString, fs, io, path::{PathBuf, Ancestors}, hash::Hash};
 
 // Type alias for `HashMap<String, Block>`
 type Blocks = HashMap<String, String>;
@@ -107,13 +107,41 @@ pub fn build() {
   let re: RegExp = RegExp {
     // Regular expression for `.md` extension replacements
     md_file_extension: Regex::new(r".md$").unwrap(),
-    // Regular expression for "extends" statements
+    // Regular expression for `extends` statements
     extends_statement: Regex::new(r#"\{% extends "(.*?)" %\}"#).unwrap(),
     // Regular expression for `block` statements
     block_statement: Regex::new(r#"\{% block (.*?) %\}"#).unwrap(),
     // Regular expression for `block` statements
     block_statements_wrapped: Regex::new(r#"\{% block ([^|]+)(\s|\s\|\sraw\s)%\}(.|\n)*?\{% endblock (.*?) %\}"#).unwrap()
   };
+
+  #[derive(Debug)]
+  pub struct BaseTemplate<'a> {
+    pub name: &'a str,
+    pub filters: &'a [&'a str],
+    pub default: &'a str,
+    pub end_name: &'a str
+  }
+
+  // let mut base_templates: HashMap<&str, BaseTemplate> = HashMap::new();
+
+  // Iterate the globbed `.html` templates in the `public` directory
+  for file_path in walk(&path_root.join("public/**/*.html").to_str().unwrap()) {
+    // Read the file content
+    let file_content: String = fs::read_to_string(file_path).expect("Error: failed to read base template file");
+    // Iterate the captures
+    for capture in Regex::new(r#"\{% block ([a-zA-Z0-9_|\s]+) %\}((.|\n)*?)\{% endblock (.*?) %\}"#).unwrap().captures_iter(&file_content) {
+
+      let names: Vec<&str> = capture[1].split("|").into_iter().map(| item: &str | item.trim()).collect::<Vec<&str>>();
+      let (name, filters, default, end_name): (&str, &[&str], &str, &str) = (names[0], if names.len() > 1 { &names[1..] } else { &[] }, &capture[2], &capture[4]);
+
+
+      println!("{:#?}", BaseTemplate {
+        name, filters, default, end_name
+      });
+
+    }
+  }
 
   // Iterate the globbed `.md` templates in the `public` directory
   for file_path in walk(&path_root.join("public/**/*.md").to_str().unwrap()) {
@@ -142,13 +170,10 @@ pub fn build() {
       }
       // Get the block's content as a `String`
       let error_undefined: &str = &format!("TemplateError: block \"{}\" not defined in {:?}", &capture[1], input);
-      let output: String = blocks.get(&capture[1]).expect(error_undefined).to_owned();
+      let mut template: String = blocks.get(&capture[1]).expect(error_undefined).to_owned();
+      template = if capture[2].contains(" | raw") { template } else { marcus::to_string(template) };
       // Determine if the MD should be compiled or inserted as raw text
-      html = html.replace(&capture[0], &(if capture[2].contains(" | raw") {
-        output
-      } else {
-        marcus::to_string(output)
-      }));
+      html = html.replace(&capture[0], &template);
     }
 
     // Write the HTML to the target file
@@ -156,13 +181,16 @@ pub fn build() {
   }
 }
 
-// Test build
-#[cfg(test)]
-mod tests {
-  use crate::build;
-
-  #[test]
-  fn sample() {
-    build();
-  }
+fn main() {
+  build();
 }
+
+// // Test build
+// #[cfg(test)]
+// mod tests {
+//   use crate::build;
+//   #[test]
+//   fn sample() {
+//     build();
+//   }
+// }
