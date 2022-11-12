@@ -1,0 +1,25 @@
+[package]
+name = "antwerp"
+version = "0.2.4"
+edition = "2021"
+description = "A framework for building static websites"
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/Malekaia/Antwerp"
+repository = "https://github.com/Malekaia/Antwerp"
+documentation = "https://github.com/Malekaia/Antwerp"
+
+[profile.dev]
+opt-level = 1
+
+[dependencies]
+chrono="0.4.19"
+colored = "2.0.0"
+fs_extra="1.2.0"
+glob = "0.3.0"
+grass = "0.11.0"
+regex = "1.6.0"
+serde = { version = "1.0.139", features = ["derive"] }
+tera = "1.16.0"
+titlecase = "2.0.0"
+toml = "0.5.9"
