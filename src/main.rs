@@ -1,38 +1,38 @@
-//! Antwerp:
-//!
-//! [Antwerp](https://crates.io/crates/antwerp) is a framework for Github Pages based on the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser.
-//! Converts MarkDown templates in `public/` into HTML and writes them to `dist/`.
-
-use glob::{glob, GlobError};
+use glob::glob;
 use regex::Regex;
-use std::{env::current_dir, collections::HashMap, ffi::OsString, fs, io, path::{PathBuf, Ancestors}, hash::Hash};
+use std::{env::current_dir, ffi::OsString, fs::{DirEntry, read_dir, read_to_string}, io, path::{PathBuf, Ancestors}, collections::HashMap};
 
-// Type alias for `HashMap<String, Block>`
-type Blocks = HashMap<String, String>;
+const ERROR_READ: &str = "ReadError: Failed to read file";
+const ERROR_GLOB: &str = "GlobError: Failed to glob directory";
+const ERROR_GLOB_UNWRAP: &str = "GlobError: failed to unwrap PathBuf";
+const ERROR_REGEX_UNWRAP: &str = "RegexError: failed to unwrap Regex";
+const ERROR_STR_UNWRAP: &str = "RegexError: failed to unwrap &str";
+const RE_EXTENDS_STATEMENT: &str = r#"\{%[\s]{0,}extends[\s]{0,}"(.*?)"[\s]{0,}%\}"#;
+const RE_PARENT_BLOCK: &str = r#"\{%[\s]{0,}block[\s]{1,}(.*?)[\s]{0,}%\}((.|\n)*?)\{%[\s]{0,}endblock[\s]{1,}(.*?)[\s]{0,}%\}"#;
+const RE_MD_EXTENSION: &str = r"\.md$";
+const VALID_FILTERS: [&str; 3] = ["text", "html", "trim"];
 
-// Used to store and cache regular expressions (prevents multiple definitions of regular expressions)
-struct RegExp {
-  md_file_extension: Regex,
-  extends_statement: Regex,
-  block_statement: Regex,
-  block_statements_wrapped: Regex
+pub type Filters = Vec<String>;
+
+#[derive(Debug)]
+pub struct Block(String, Filters, String);
+pub type Blocks = Vec<Block>;
+
+#[derive(Debug)]
+pub struct Template {
+  pub parent: bool,
+  pub extends: String,
+  pub output: String,
+  pub output_dir: String,
+  pub blocks: Blocks
 }
+pub type Templates = HashMap<String, Template>;
 
-/// Find the absolute root directory path of a project as it stands relative to the location of the nearest Cargo.lock file
-///
-/// Crate: https://crates.io/crates/project-root
-///
-/// ```rust
-/// match project_root::project_root() {
-///   Ok(p) => println!("Current project root is {:?}", p),
-///   Err(e) => println!("Error obtaining project root {:?}", e)
-/// };
-/// ```
 fn project_root() -> io::Result<PathBuf> {
   let path: PathBuf = current_dir()?;
   let mut path_ancestors: Ancestors = path.as_path().ancestors();
   while let Some(p) = path_ancestors.next() {
-    if fs::read_dir(p)?.into_iter().any(| p: Result<fs::DirEntry, io::Error> | {
+    if read_dir(p)?.into_iter().any(| p: Result<DirEntry, io::Error> | {
       p.unwrap().file_name() == OsString::from("Cargo.lock")
     }) {
       return Ok(PathBuf::from(p))
@@ -41,156 +41,105 @@ fn project_root() -> io::Result<PathBuf> {
   Err(io::Error::new(io::ErrorKind::NotFound, "could not find Cargo.lock"))
 }
 
-// Return an iterator from `glob` (with error handling)
-fn walk(path: &str) -> impl Iterator<Item = String> {
-  glob(path).expect("GlobError: Failed to read glob pattern").map(| entry: Result<PathBuf, GlobError> |
-    entry.expect("GlobError: failed to glob entry").display().to_string()
-  )
-}
-
-// Extract template data (base template and names/MarkDown templates for blocks)
-fn get_base_and_blocks(content: String, re: &RegExp) -> (String, Blocks) {
-  // Ensure the template extends a base template
-  if !re.extends_statement.is_match(&content) {
-    panic!("TemplateError: missing extend.");
-  }
-
-  // Store names and MarkDown templates for blocks
-  let mut blocks: Blocks = HashMap::new();
-
-  // Iterate all captures for `block` statements
-  for capture in re.block_statement.captures_iter(&content) {
-    // Get the current block's name
-    let block_name: &str = &capture[1];
-    // Create a valid `endblock` statement for the current block
-    let end_block: &str = &format!("{{% endblock {} %}}", block_name);
-
-    // Ensure all `block` statements have an accompanying `endblock` statement
-    if !content.contains(end_block) {
-      panic!("TemplateError: missing or mismatched \"endblock\" statement for block (\"{}\")", block_name);
-    }
-    // Ensure there are no duplicate `block` statements
-    else if content.matches(&capture[0]).count() > 1 {
-      panic!("TemplateError: duplicate \"block\" for \"{}\"", block_name);
-    }
-    // Ensure there are no duplicate `endblock` statements
-    else if content.matches(end_block).count() > 1 {
-      panic!("TemplateError: duplicate \"endblock\" for \"{}\"", block_name);
-    }
-
-    // Get the indexes of the (inner) blocks and insert the block's name and content into the `blocks` `HashMap`
-    let start: usize = content.find(&capture[0]).unwrap() + &capture[0].len();
-    let stop: usize = content.find(end_block).unwrap();
-    blocks.insert(block_name.to_string(), content[start..stop].to_string());
-  }
-
-  // Return the base template name and the contents of the blocks
-  (re.extends_statement.captures(&content).unwrap()[1].to_string(), blocks)
-}
-
-/// Compile all `.md` templates in `public/` to `.html` and save them in `dist/`
-pub fn build() {
+fn extract_blocks(glob_path: &str) -> Templates {
   // Get the root path (absolute) of the project relative to Cargo.lock
   let path_root: PathBuf = match project_root() {
     Ok(path) => path,
     Err(error) => panic!("Error: failed to obtain project root: {:?}", error)
   };
 
-  // Get the `public` and `dist` root paths
-  let path_public: PathBuf = path_root.join("public");
+  // Get the public and dist directories
   let path_dist: PathBuf = path_root.join("dist");
-  // Convert the `public` and `dist` root paths to strings (prevents duplicate conversions in loop)
-  let path_public_str: &str = path_public.to_str().unwrap();
-  let path_dist_str: &str = path_dist.to_str().unwrap();
+  let path_dist_str: &str = path_dist.to_str().expect(ERROR_STR_UNWRAP);
+  let path_public: PathBuf = path_root.join("public");
+  let path_public_str: &str = path_public.to_str().expect(ERROR_STR_UNWRAP);
 
-  // Cache regular expressions for future referencing
-  let re: RegExp = RegExp {
-    // Regular expression for `.md` extension replacements
-    md_file_extension: Regex::new(r".md$").unwrap(),
-    // Regular expression for `extends` statements
-    extends_statement: Regex::new(r#"\{% extends "(.*?)" %\}"#).unwrap(),
-    // Regular expression for `block` statements
-    block_statement: Regex::new(r#"\{% block (.*?) %\}"#).unwrap(),
-    // Regular expression for `block` statements
-    block_statements_wrapped: Regex::new(r#"\{% block ([^|]+)(\s|\s\|\sraw\s)%\}(.|\n)*?\{% endblock (.*?) %\}"#).unwrap()
-  };
+  // Prevent multiple definitions of regular expressions
+  let re_extends_statement: Regex = Regex::new(RE_EXTENDS_STATEMENT).expect(ERROR_REGEX_UNWRAP);
+  let re_parent_block: Regex = Regex::new(RE_PARENT_BLOCK).expect(ERROR_REGEX_UNWRAP);
+  let re_md_extension: Regex = Regex::new(RE_MD_EXTENSION).expect(ERROR_REGEX_UNWRAP);
 
-  #[derive(Debug)]
-  pub struct BaseTemplate<'a> {
-    pub name: &'a str,
-    pub filters: &'a [&'a str],
-    pub default: &'a str,
-    pub end_name: &'a str
-  }
+  // Create a store for the templates
+  let mut templates: Templates = HashMap::new();
 
-  // let mut base_templates: HashMap<&str, BaseTemplate> = HashMap::new();
+  // Glob the given path
+  for globbed in glob(path_root.join(glob_path).to_str().expect(ERROR_STR_UNWRAP)).expect(ERROR_GLOB) {
+    // Get the file_path and file content
+    let file_path: String = globbed.expect(ERROR_GLOB_UNWRAP).display().to_string();
+    let file_content: String = read_to_string(&file_path).expect(ERROR_READ);
 
-  // Iterate the globbed `.html` templates in the `public` directory
-  for file_path in walk(&path_root.join("public/**/*.html").to_str().unwrap()) {
-    // Read the file content
-    let file_content: String = fs::read_to_string(file_path).expect("Error: failed to read base template file");
-    // Iterate the captures
-    for capture in Regex::new(r#"\{% block ([a-zA-Z0-9_|\s]+) %\}((.|\n)*?)\{% endblock (.*?) %\}"#).unwrap().captures_iter(&file_content) {
-
-      let names: Vec<&str> = capture[1].split("|").into_iter().map(| item: &str | item.trim()).collect::<Vec<&str>>();
-      let (name, filters, default, end_name): (&str, &[&str], &str, &str) = (names[0], if names.len() > 1 { &names[1..] } else { &[] }, &capture[2], &capture[4]);
-
-
-      println!("{:#?}", BaseTemplate {
-        name, filters, default, end_name
-      });
-
-    }
-  }
-
-  // Iterate the globbed `.md` templates in the `public` directory
-  for file_path in walk(&path_root.join("public/**/*.md").to_str().unwrap()) {
-    // Get the base template and the blocks from the template
-    let template_content: String = fs::read_to_string(&file_path).expect("ReadError: failed to read template file");
-    let (mut base, blocks): (String, Blocks) = get_base_and_blocks(template_content, &re);
-    base = path_public.join(base).to_str().unwrap().to_string();
-
-    // Get the paths for the: template file, output `.md` file, output file & output directory
-    let input: String = path_root.join(&file_path).to_str().unwrap().to_string();
-    let output_path: PathBuf = PathBuf::from(input.replace(path_public_str, path_dist_str));
-    let output: String = re.md_file_extension.replace(&output_path.to_str().unwrap().to_string(), ".html").to_string();
-    let output_dir: String = output_path.parent().unwrap().to_str().unwrap().to_string();
-
-    // Ensure the parent directory for the output `.html` file exists
-    fs::create_dir_all(&output_dir).expect("EnsureDirError: failed to create directory");
-
-    // Get the contents of the base template
-    let mut html: String = fs::read_to_string(&base).expect("ReadError: failed to read base template file");
-
-    // Iterate the matched blocks in the base template
-    for capture in re.block_statements_wrapped.captures_iter(&html.clone()) {
-      // Prevent mismatched names in `block` and `endblock` statements
-      if &capture[1] != &capture[4] {
-        panic!("TemplateError: mismatched name in \"block\" and \"endblock\" statement");
+    // Determine if the template extends another
+    let mut extends: String = String::new();
+    for (i, capture) in re_extends_statement.captures_iter(&file_content).enumerate() {
+      if i > 0 {
+        panic!("TemplateError: multiple extends statements in \"{}\"", file_path)
+      } else if file_path.ends_with(".html") {
+        panic!("TemplateError: cannot use a \".html\" file as a child template \"{}\"", file_path);
       }
-      // Get the block's content as a `String`
-      let error_undefined: &str = &format!("TemplateError: block \"{}\" not defined in {:?}", &capture[1], input);
-      let mut template: String = blocks.get(&capture[1]).expect(error_undefined).to_owned();
-      template = if capture[2].contains(" | raw") { template } else { marcus::to_string(template) };
-      // Determine if the MD should be compiled or inserted as raw text
-      html = html.replace(&capture[0], &template);
+      extends = path_root.join("public").join(&capture[1].trim()).display().to_string();
     }
 
-    // Write the HTML to the target file
-    fs::write(&output, html).expect("WriteError: failed to write to file");
+    // Get the output path, output directory and parent status
+    let parent: bool;
+    let output: String;
+    let output_dir: String;
+    if extends.len() > 0 {
+      parent = false;
+      output = re_md_extension.replace(&file_path.replace(path_public_str, path_dist_str), ".html").to_string();
+      output_dir = PathBuf::from(&output).parent().unwrap().to_str().unwrap().to_string();
+    } else {
+      parent = true;
+      output = String::new();
+      output_dir = String::new();
+    }
+
+    // Iterate the captured blocks
+    let mut blocks: Blocks = vec![];
+    for capture in re_parent_block.captures_iter(&file_content) {
+      // Get the block name, content and end name
+      let (mut name, content, mut end_name): (&str, &str, &str) = (&capture[1].trim(), &capture[2], &capture[4].trim());
+      end_name = end_name.trim();
+      let mut filters: Filters = vec![];
+      // Extract the names and the filters
+      for (i, mut item) in name.split("|").enumerate() {
+        item = item.trim();
+        // The first item is the name of the block
+        if i == 0 {
+          name = item;
+        }
+        // All other items are filters
+        else {
+          // Validate the filters
+          if !VALID_FILTERS.contains(&item) {
+            panic!("TemplateError: invalid filter (\"{}\") in template \"{}\"", item, file_path);
+          }
+          filters.push(item.to_string());
+        }
+      }
+      // Ensure the block names match
+      if name != end_name {
+        panic!("TemplateError: mismatching block names (\"{}\" / \"{}\") in template \"{}\"", name, end_name, file_path);
+      }
+      // Add the block to the blocks list
+      blocks.push(Block(name.to_string(), filters, content.to_string()));
+    }
+
+    // Add the template to the templates HashMap
+    templates.insert(file_path, Template {
+      parent,
+      extends,
+      output,
+      output_dir,
+      blocks
+    });
   }
+  // Return the templates
+  templates
 }
 
 fn main() {
-  build();
+  let parent_templates: Templates = extract_blocks("public/**/*.html");
+  println!("{parent_templates:#?}");
+  let child_templates: Templates = extract_blocks("public/**/*.md");
+  println!("{child_templates:#?}");
 }
-
-// // Test build
-// #[cfg(test)]
-// mod tests {
-//   use crate::build;
-//   #[test]
-//   fn sample() {
-//     build();
-//   }
-// }
