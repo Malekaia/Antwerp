@@ -29,7 +29,6 @@ pub fn output(filters: &Filters, text: &String) -> String {
     // Parse MarkDown to HTML
     else if filter == "html" {
       output = marcus::to_string(output);
-      println!("{output}");
     }
   }
 

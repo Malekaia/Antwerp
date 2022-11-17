@@ -1,6 +1,7 @@
 use crate::filter;
 use crate::parse::templates;
 use crate::types::{Block, Template, Templates};
+use std::fs::{create_dir_all, write};
 
 /// Build parsed templates from `parse::templates()` in `./dist/`
 pub fn dist() {
@@ -39,6 +40,14 @@ pub fn dist() {
       }
     }
 
-    println!("{html:#?}\n\n");
+
+    match create_dir_all(&template.output_dir) {
+      Ok(_) => {},
+      Err(_) => panic!("CreateDirAllError: failed to create directory \"{}\"", &template.output_dir)
+    };
+    match write(&template.output, &html) {
+      Ok(_) => {},
+      Err(_) => panic!("WriteError: write \"html\" to \"{}\"", &template.output)
+    };
   }
 }
