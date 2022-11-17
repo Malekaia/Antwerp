@@ -1,6 +1,6 @@
-use crate::types::{Block, Template, Templates};
+use crate::filter;
 use crate::parse::templates;
-
+use crate::types::{Block, Template, Templates};
 
 /// Build parsed templates from `parse::templates()` in `./dist/`
 pub fn dist() {
@@ -28,14 +28,14 @@ pub fn dist() {
       }
       // Replace the block content with the given template
       let parent_block: &Block = parent.blocks.get(name).unwrap();
-      html = html.replace(&parent_block.content_outer, &block.content);
+      html = html.replace(&parent_block.content_outer, &filter::output(&block.filters, &block.content));
     }
 
     // Iterate the parent blocks
     for (_, block) in &parent.blocks {
       // Replace unspecified blocks with their default value
       if html.contains(&block.content_outer) {
-        html = html.replace(&block.content_outer, &block.content);
+        html = html.replace(&block.content_outer, &filter::output(&block.filters, &block.content));
       }
     }
 

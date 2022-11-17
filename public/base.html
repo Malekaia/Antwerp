@@ -11,8 +11,9 @@
     <p>This is the default body.</p>
   {% endblock body %}
 
-  {% block footer %}
-    <footer>This is the default footer</footer>
+  {% block footer | trim | text %}
+    * Default List<br/>
+      * Won't get converted into HTML
   {% endblock footer %}
 </body>
 </html>
