@@ -18,3 +18,7 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
   }
 </style>
 {% endblock body %}
+
+{% block footer %}
+<footer>This is a custom footer</footer>
+{% endblock footer %}
