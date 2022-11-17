@@ -1,8 +1,10 @@
-## Antwerp <img align="right" src="https://github.com/Malekaia/Antwerp/actions/workflows/build.yaml/badge.svg">
+# Antwerp <img align="right" src="https://github.com/Malekaia/Antwerp/actions/workflows/build.yaml/badge.svg">
 
 [Antwerp](https://crates.io/crates/antwerp) is a framework for Github Pages based on the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser. Antwerp converts MarkDown templates in `public/` into HTML and writes them to `dist/`.
 
 ## Demonstration:
+
+`main.rs`
 
 ```rust
 use antwerp;
@@ -12,9 +14,9 @@ fn main() {
 }
 ```
 
-### Input files:
+## Input:
 
-Base template (`public/base.html`):
+`public/base.html`
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -22,15 +24,22 @@ Base template (`public/base.html`):
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title | raw %}{% endblock title %}</title>
+  <title>{% block title | text | trim %}{% endblock title %}</title>
 </head>
 <body>
-  {% block body %}{% endblock body %}
+  {% block body %}
+    <p>This is the default body.</p>
+  {% endblock body %}
+
+  {% block footer | trim | text %}
+    * Default List<br/>
+      * Won't get converted into HTML
+  {% endblock footer %}
 </body>
 </html>
 ```
 
-Homepage (`public/index.md`):
+`public/index.md`
 ```markdown
 {% extends "base.html" %}
 
@@ -43,7 +52,7 @@ This is the template, it contains a link to [a file](/section/chapter/file.html)
 {% endblock body %}
 ```
 
-Sample file (`public/section/chapter/file.md`):
+`public/section/chapter/file.md`
 ```markdown
 {% extends "base.html" %}
 {% block title %}This is the title{% endblock title %}
@@ -65,11 +74,15 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
   }
 </style>
 {% endblock body %}
+
+{% block footer %}
+<footer>This is a custom footer</footer>
+{% endblock footer %}
 ```
 
-### Output files:
+## Output:
 
-Homepage (`dist/index.html`):
+`dist/index.html`
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -77,17 +90,20 @@ Homepage (`dist/index.html`):
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>This is the title</title>
+  <title><p>This is the title</p></title>
 </head>
 <body>
   <h1>Hello World!</h1>
 
 <p>This is the template, it contains a link to <a href="/section/chapter/file.html">a file</a> in the first chapter of a random section.</p>
+
+  * Default List<br/>
+      * Won't get converted into HTML
 </body>
 </html>
 ```
 
-Sample file (`dist/section/chapter/file.md`):
+`dist/section/chapter/file.md`
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -95,7 +111,7 @@ Sample file (`dist/section/chapter/file.md`):
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>This is the title</title>
+  <title><p>This is the title</p></title>
 </head>
 <body>
   <h1>Hello World!</h1>
@@ -113,6 +129,8 @@ Sample file (`dist/section/chapter/file.md`):
     font-family: sans-serif
   }
 </style>
+
+  <footer>This is a custom footer</footer>
 </body>
 </html>
 ```
