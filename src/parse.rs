@@ -1,4 +1,4 @@
-use crate::types::*;
+use crate::types::{VALID_FILTERS, Filters, Block, Blocks, Template, Templates};
 use glob::glob;
 use regex::Regex;
 use std::collections::HashMap;
@@ -7,6 +7,25 @@ use std::ffi::OsString;
 use std::fs::{DirEntry, read_dir, read_to_string};
 use std::io::{ErrorKind, Error as IoError, Result as IoResult};
 use std::path::{PathBuf, Ancestors};
+
+
+/// Error for `fs` file read operations
+const ERROR_READ: &str = "ReadError: Failed to read file";
+/// Error for directory `glob` errors
+const ERROR_GLOB: &str = "GlobError: Failed to glob directory";
+/// Error for `glob` unwrap errors
+const ERROR_GLOB_UNWRAP: &str = "GlobError: failed to unwrap PathBuf";
+/// Error for `Regex` unwrap error
+const ERROR_REGEX_UNWRAP: &str = "RegexError: failed to unwrap Regex";
+/// Error for `&str` unwrap error
+const ERROR_STR_UNWRAP: &str = "RegexError: failed to unwrap &str";
+/// Regular expression for extends (`{% extends "..." %}`) statements
+const RE_EXTENDS_STATEMENT: &str = r#"\{%[\s]{0,}extends[\s]{0,}"(.*?)"[\s]{0,}%\}"#;
+/// Regular expression for block (`{% block ... | ... %}...{% endblock ... %}`) statements
+const RE_PARENT_BLOCK: &str = r#"\{%[\s]{0,}block[\s]{1,}(.*?)[\s]{0,}%\}((.|\n)*?)\{%[\s]{0,}endblock[\s]{1,}(.*?)[\s]{0,}%\}"#;
+/// Regular expression for `.md` file types
+const RE_MD_EXTENSION: &str = r"\.md$";
+
 
 /// Get the project root from the nearest Cargo.lock file
 fn project_root() -> IoResult<PathBuf> {
@@ -21,6 +40,7 @@ fn project_root() -> IoResult<PathBuf> {
   }
   Err(IoError::new(ErrorKind::NotFound, "could not find Cargo.lock"))
 }
+
 
 /// Parse and organise template files in `./public/`
 pub fn templates(glob_path: &str) -> Templates {

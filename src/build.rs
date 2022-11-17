@@ -1,5 +1,6 @@
-use crate::types::*;
+use crate::types::{Block, Template, Templates};
 use crate::parse::templates;
+
 
 /// Build parsed templates from `parse::templates()` in `./dist/`
 pub fn dist() {
