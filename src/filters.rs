@@ -1,8 +1,8 @@
 use crate::Filters;
 use marcus;
 
-/// A list containing filter names and output methods
-pub const FILTER_LIST: &[(&str, fn(String) -> String)] = &[
+// A list containing filter names and output methods
+const FILTER_LIST: &[(&str, fn(String) -> String)] = &[
   // Return the raw text
   ("text", | output: String | output),
   // Trim the output

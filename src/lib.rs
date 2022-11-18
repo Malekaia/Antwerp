@@ -1,7 +1,6 @@
 mod filters;
 mod parser;
 use crate::filters::filter_output;
-pub use crate::filters::FILTER_LIST;
 use crate::parser::parse_templates;
 use std::collections::HashMap;
 use std::fs::{create_dir_all, write};
