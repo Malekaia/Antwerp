@@ -28,13 +28,14 @@ fn main() {
 </head>
 <body>
   {% block body %}
-    <p>This is the default body.</p>
+    <p>This paragraph serves as the default content for the <code>body</code> block.</p>
   {% endblock body %}
 
-  {% block footer | trim | text %}
-    * Default List<br/>
-      * Won't get converted into HTML
-  {% endblock footer %}
+  <footer>
+    {% block footer | trim | text %}
+      # This is a header for the default footer (it won't get converted to HTML).
+    {% endblock footer %}
+  </footer>
 </body>
 </html>
 ```
@@ -43,19 +44,19 @@ fn main() {
 ```markdown
 {% extends "base.html" %}
 
-{% block title %}This is the title{% endblock title %}
+{% block title %}Homepage{% endblock title %}
 
 {% block body %}
 # Hello World!
 
-This is the template, it contains a link to [a file](/section/chapter/file.html) in the first chapter of a random section.
+This is the template, it contains a link to [a file](/section/chapter/file.html) in the first chapter of a random section and the default footer (below).
 {% endblock body %}
 ```
 
 `public/section/chapter/file.md`
 ```markdown
 {% extends "base.html" %}
-{% block title %}This is the title{% endblock title %}
+{% block title %}Section / Chapter / File{% endblock title %}
 
 {% block body %}
 # Hello World!
@@ -76,7 +77,9 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 {% endblock body %}
 
 {% block footer %}
-<footer>This is a custom footer</footer>
+  <footer>
+    This is a custom footer for the `section / chapter / file` page.
+  </footer>
 {% endblock footer %}
 ```
 
@@ -90,15 +93,16 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><p>This is the title</p></title>
+  <title><p>Homepage</p></title>
 </head>
 <body>
   <h1>Hello World!</h1>
 
-<p>This is the template, it contains a link to <a href="/section/chapter/file.html">a file</a> in the first chapter of a random section.</p>
+<p>This is the template, it contains a link to <a href="/section/chapter/file.html">a file</a> in the first chapter of a random section and the default footer (below).</p>
 
-  * Default List<br/>
-      * Won't get converted into HTML
+  <footer>
+    # This is a header for the default footer (it won't get converted to HTML).
+  </footer>
 </body>
 </html>
 ```
@@ -111,7 +115,7 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><p>This is the title</p></title>
+  <title><p>Section / Chapter / File</p></title>
 </head>
 <body>
   <h1>Hello World!</h1>
@@ -130,7 +134,12 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
   }
 </style>
 
-  <footer>This is a custom footer</footer>
+  <footer>
+    <footer>
+
+<p> This is a custom footer for the <code>section / chapter / file</code> page.</p>
+  </footer>
+  </footer>
 </body>
 </html>
 ```
