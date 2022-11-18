@@ -1,4 +1,4 @@
-use crate::types::{VALID_FILTERS, Filters, Block, Blocks, Template, Templates};
+use crate::{Filters, Block, Blocks, Template, Templates};
 use glob::glob;
 use regex::Regex;
 use std::collections::HashMap;
@@ -7,7 +7,6 @@ use std::ffi::OsString;
 use std::fs::{DirEntry, read_dir, read_to_string};
 use std::io::{ErrorKind, Error as IoError, Result as IoResult};
 use std::path::{PathBuf, Ancestors};
-
 
 /// Error for `fs` file read operations
 const ERROR_READ: &str = "ReadError: Failed to read file";
@@ -26,7 +25,6 @@ const RE_PARENT_BLOCK: &str = r#"\{%[\s]{0,}block[\s]{1,}(.*?)[\s]{0,}%\}((.|\n)
 /// Regular expression for `.md` file types
 const RE_MD_EXTENSION: &str = r"\.md$";
 
-
 /// Get the project root from the nearest Cargo.lock file
 fn project_root() -> IoResult<PathBuf> {
   let path: PathBuf = current_dir()?;
@@ -41,9 +39,8 @@ fn project_root() -> IoResult<PathBuf> {
   Err(IoError::new(ErrorKind::NotFound, "could not find Cargo.lock"))
 }
 
-
 /// Parse and organise template files in `./public/`
-pub fn templates(glob_path: &str) -> Templates {
+pub (crate) fn parse_templates(glob_path: &str) -> Templates {
   // Get the root path (absolute) of the project relative to Cargo.lock
   let path_root: PathBuf = match project_root() {
     Ok(path) => path,
@@ -108,10 +105,6 @@ pub fn templates(glob_path: &str) -> Templates {
         }
         // All other items are filters
         else {
-          // Validate the filters
-          if !VALID_FILTERS.contains(&item) {
-            panic!("TemplateError: invalid filter (\"{}\") in template \"{}\"", item, file_path);
-          }
           filters.push(item.to_string());
         }
       }
