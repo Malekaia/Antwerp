@@ -1,10 +1,37 @@
-## Antwerp <img align="right" src="https://github.com/Malekaia/Antwerp/actions/workflows/build.yaml/badge.svg">
+# Antwerp <img align="right" src="https://github.com/Malekaia/Antwerp/actions/workflows/build.yaml/badge.svg">
 
-[Antwerp](https://crates.io/crates/antwerp) is a framework for Github Pages based on the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser. Antwerp converts MarkDown templates in `public/` into HTML and writes them to `dist/`.
+[Antwerp](https://crates.io/crates/antwerp) is an open-source web framework ported from Node.js & Pug to Rust for GitHub Pages.
+It outputs static web pages in `dist/` using HTML and MarkDown templates in `public/`, which are converted to HTML using the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser.
 
-### Demonstration:
 
-`main.rs`
+## References & Getting Started:
+- <https://crates.io/crates/antwerp>
+- <https://github.com/Malekaia/Antwerp>
+- <https://docs.rs/antwerp/latest/antwerp/>
+- <https://crates.io/crates/marcus>
+- <https://github.com/Malekaia/Marcus/>
+- <https://docs.rs/marcus/latest/marcus/>
+- <https://developer.mozilla.org/en-US/docs/Web/HTML>
+- <https://www.markdownguide.org/>
+
+
+## Demonstration:
+
+**main.rs** (`Cargo.toml`):
+```TOML
+[package]
+name = "<NAME>"
+version = "<VERSION>"
+edition = "2021"
+description = "<DESCRIPTION>"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+antwerp = "0.3.1"
+```
+
+**main.rs** (`src/main.rs`):
 
 ```rust
 use antwerp;
@@ -14,9 +41,11 @@ fn main() {
 }
 ```
 
-### Input:
 
-`public/base.html`
+## Input:
+
+**base.html** (`public/base.html`):
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +69,7 @@ fn main() {
 </html>
 ```
 
-`public/index.md`
+**index.md** (`public/index.md`):
 ```markdown
 {% extends "base.html" %}
 
@@ -53,7 +82,7 @@ This is the template, it contains a link to [a file](/section/chapter/file.html)
 {% endblock body %}
 ```
 
-`public/section/chapter/file.md`
+**file.md** (`public/section/chapter/file.md`):
 ```markdown
 {% extends "base.html" %}
 {% block title %}Section / Chapter / File{% endblock title %}
@@ -83,9 +112,10 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 {% endblock footer %}
 ```
 
-### Output:
 
-`dist/index.html`
+## Output:
+
+**index.html** (`dist/index.html`):
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -107,7 +137,7 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 </html>
 ```
 
-`dist/section/chapter/file.md`
+**file.md** (`dist/section/chapter/file.md`):
 ```html
 <!DOCTYPE html>
 <html lang="en">
