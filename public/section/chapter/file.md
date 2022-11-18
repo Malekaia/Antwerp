@@ -19,8 +19,8 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 </style>
 {% endblock body %}
 
-<footer>
-  {% block footer %}
+{% block footer %}
+  <footer>
     This is a custom footer for the `section / chapter / file` page.
-  {% endblock footer %}
-</footer>
+  </footer>
+{% endblock footer %}
