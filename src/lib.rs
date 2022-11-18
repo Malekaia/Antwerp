@@ -83,3 +83,12 @@ pub fn build() {
     };
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use crate as Antwerp;
+  #[test]
+  fn antwerp() {
+    Antwerp::build();
+  }
+}
