@@ -2,7 +2,7 @@ use crate::Filters;
 use marcus;
 
 /// A list containing filter names and output methods
-pub const FILTERS: &[(&str, fn(String) -> String)] = &[
+pub const FILTER_LIST: &[(&str, fn(String) -> String)] = &[
   // Return the raw text
   ("text", | output: String | output),
   // Trim the output
@@ -23,8 +23,8 @@ pub (crate) fn filter_output(filters: &Filters, text: &String) -> String {
   // Iterate the user filters
   for filter in filters {
     let mut found: bool = false;
-    // Iterate the `FILTERS` const
-    for (name, method) in FILTERS {
+    // Iterate the `FILTER_LIST` const
+    for (name, method) in FILTER_LIST {
       // Filter the output (if requested)
       if filter == name {
         found = true;
