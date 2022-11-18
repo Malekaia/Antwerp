@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}This is the title{% endblock title %}
+{% block title %}Section / Chapter / File{% endblock title %}
 
 {% block body %}
 # Hello World!
@@ -19,6 +19,8 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 </style>
 {% endblock body %}
 
-{% block footer %}
-<footer>This is a custom footer</footer>
-{% endblock footer %}
+<footer>
+  {% block footer %}
+    This is a custom footer for the `section / chapter / file` page.
+  {% endblock footer %}
+</footer>

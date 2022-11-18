@@ -8,12 +8,13 @@
 </head>
 <body>
   {% block body %}
-    <p>This is the default body.</p>
+    <p>This paragraph serves as the default content for the <code>body</code> block.</p>
   {% endblock body %}
 
-  {% block footer | trim | text %}
-    * Default List<br/>
-      * Won't get converted into HTML
-  {% endblock footer %}
+  <footer>
+    {% block footer | trim | text %}
+      # This is a header for the default footer (it won't get converted to HTML).
+    {% endblock footer %}
+  </footer>
 </body>
 </html>
