@@ -1,3 +1,17 @@
+//! ### Antwerp
+//! [Antwerp](https://crates.io/crates/antwerp) is an open-source web framework ported from Node.js & Pug to Rust for GitHub Pages.
+//! It outputs static web pages in `dist/` using HTML and MarkDown templates in `public/`, which are converted to HTML using the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser.
+//!
+//! References & Getting Started:
+//! - <https://crates.io/crates/antwerp>
+//! - <https://github.com/Malekaia/Antwerp>
+//! - <https://docs.rs/antwerp/latest/antwerp/>
+//! - <https://crates.io/crates/marcus>
+//! - <https://github.com/Malekaia/Marcus/>
+//! - <https://docs.rs/marcus/latest/marcus/>
+//! - <https://developer.mozilla.org/en-US/docs/Web/HTML>
+//! - <https://www.markdownguide.org/>
+
 mod filters;
 mod parser;
 use crate::filters::filter_output;
@@ -16,7 +30,7 @@ pub struct Block {
   pub content: String
 }
 
-/// Type alias for a `Vector` of `Block`
+/// Type alias for a `HashMap` where key: `String` and value: `Block`
 pub type Blocks = HashMap<String, Block>;
 
 /// Type for templates
@@ -29,7 +43,7 @@ pub struct Template {
   pub blocks: Blocks
 }
 
-/// Type alias for `HashMap` with `String` for keys and `Template` for values
+/// Type alias for `HashMap` where key: `String` and value: `Template`
 pub type Templates = HashMap<String, Template>;
 
 /// Build parsed templates from `parse::templates()` in `./dist/`
