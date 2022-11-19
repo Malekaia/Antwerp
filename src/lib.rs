@@ -196,7 +196,14 @@ pub fn build() {
       }
       // Replace the block content with the given template
       let parent_block: &Block = parent.blocks.get(name).unwrap();
-      html = html.replace(&parent_block.content_outer, &filter_output(&filter_methods, &block.filters, &block.content));
+      // Use parent filters by default if no child filters are defined
+      let filters: &Vec<String> = if !block.filters.is_empty() {
+        &block.filters
+      } else {
+        &parent_block.filters
+      };
+      // Replace the HTML with the filtered output
+      html = html.replace(&parent_block.content_outer, &filter_output(&filter_methods, filters, &block.content));
     }
 
     // Iterate the parent blocks
