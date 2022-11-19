@@ -1,17 +1,11 @@
-use crate::Filters;
+use crate::{Filters, FilterMethods};
 use marcus;
 
-// A list containing filter names and output methods
-const FILTER_LIST: &[(&str, fn(String) -> String)] = &[
-  // Return the raw text
-  ("text", | output: String | output),
-  // Trim the output
-  ("trim", | output: String | output.trim().to_string()),
-  // Parse MarkDown to HTML
-  ("html", | output: String | marcus::to_string(output))
-];
 
-pub (crate) fn filter_output(filters: &Filters, text: &String) -> String {
+
+
+
+pub (crate) fn filter_output(filter_methods: &FilterMethods, filters: &Filters, text: &String) -> String {
   // Create an owned copy of the text `
   let mut output: String = text.to_owned();
 
@@ -22,19 +16,12 @@ pub (crate) fn filter_output(filters: &Filters, text: &String) -> String {
 
   // Iterate the user filters
   for filter in filters {
-    let mut found: bool = false;
-    // Iterate the `FILTER_LIST` const
-    for (name, method) in FILTER_LIST {
-      // Filter the output (if requested)
-      if filter == name {
-        found = true;
-        output = method(output);
-      }
-    }
-    // Validate filters
-    if found == false {
+    // Validate each filter
+    if !filter_methods.contains_key(filter) {
       panic!("TemplateError: undefined filter (\"{}\")", filter);
     }
+    // Filter the output (if requested)
+    output = filter_methods.get(filter).unwrap()(output);
   }
 
   // Return the string as is (including for `text`) filters
