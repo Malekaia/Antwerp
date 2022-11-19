@@ -92,11 +92,10 @@ pub (crate) fn parse_templates(glob_path: &str) -> Templates {
     // Iterate the captured blocks
     let mut blocks: Blocks = HashMap::new();
     for capture in re_parent_block.captures_iter(&file_content) {
-      // Get the block name, content and end name
-      let (mut name, content, mut end_name): (&str, &str, &str) = (&capture[1].trim(), &capture[2], &capture[4].trim());
-      end_name = end_name.trim();
-      let mut filters: Filters = vec![];
-      // Extract the names and the filters
+      // Get the block name, filters, end name and content
+      let (mut name, mut filters, end_name, content): (&str, Filters, &str, &str) = (&capture[1].trim(), vec![], &capture[4].trim(), &capture[2]);
+
+      // Extract the block's name and filters
       for (i, mut item) in name.split("|").enumerate() {
         item = item.trim();
         // The first item is the name of the block
@@ -108,10 +107,12 @@ pub (crate) fn parse_templates(glob_path: &str) -> Templates {
           filters.push(item.to_string());
         }
       }
+
       // Ensure the block names match
       if name != end_name {
         panic!("TemplateError: mismatching block names (\"{}\" / \"{}\") in template \"{}\"", name, end_name, file_path);
       }
+
       // Add the block to the blocks list
       blocks.insert(name.to_string(), Block {
         filters,
