@@ -1,5 +1,5 @@
 //! ### Antwerp
-//! [Antwerp](https://crates.io/crates/antwerp) is an open-source web framework ported from Node.js & Pug to Rust for GitHub Pages.
+//! [Antwerp](https://crates.io/crates/antwerp) is an open-source framework ported from JavaScript to Rust for GitHub pages and built with the Marcus HTML to MarkDown parser.
 //! It outputs static web pages in `dist/` using HTML and MarkDown templates in `public/`, which are converted to HTML using the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser.
 //!
 //! References & Getting Started:
