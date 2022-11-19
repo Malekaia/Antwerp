@@ -3,18 +3,6 @@
 [Antwerp](https://crates.io/crates/antwerp) is an open-source web framework ported from Node.js & Pug to Rust for GitHub Pages.
 It outputs static web pages in `dist/` using HTML and MarkDown templates in `public/`, which are converted to HTML using the [Marcus](https://crates.io/crates/marcus) MarkDown to HTML parser.
 
-
-## References & Getting Started:
-- <https://crates.io/crates/antwerp>
-- <https://github.com/Malekaia/Antwerp>
-- <https://docs.rs/antwerp/latest/antwerp/>
-- <https://crates.io/crates/marcus>
-- <https://github.com/Malekaia/Marcus/>
-- <https://docs.rs/marcus/latest/marcus/>
-- <https://developer.mozilla.org/en-US/docs/Web/HTML>
-- <https://www.markdownguide.org/>
-
-
 ## Demonstration:
 
 **Cargo.toml** (`Cargo.toml`):
@@ -173,3 +161,19 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 </body>
 </html>
 ```
+
+## References:
+
+**Antwerp**:
+- <https://crates.io/crates/antwerp>
+- <https://github.com/Malekaia/Antwerp>
+- <https://docs.rs/antwerp/latest/antwerp/>
+
+**Marcus**:
+- <https://crates.io/crates/marcus>
+- <https://github.com/Malekaia/Marcus/>
+- <https://docs.rs/marcus/latest/marcus/>
+
+**MarkDown/HTML**:
+- <https://www.markdownguide.org/>
+- <https://developer.mozilla.org/en-US/docs/Web/HTML>
