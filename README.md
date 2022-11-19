@@ -177,3 +177,6 @@ This page also includes CSS styles, which are ignored by the [Marcus](https://cr
 **MarkDown/HTML**:
 - <https://www.markdownguide.org/>
 - <https://developer.mozilla.org/en-US/docs/Web/HTML>
+
+## Licence:
+The source code included in this repository is distributed, for free, under the [MIT Licence](https://choosealicense.com/licenses/mit/), for the full license, see [LICENSE.md](https://github.com/Malekaia/Antwerp/blob/master/LICENSE.md).
