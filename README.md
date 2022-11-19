@@ -17,8 +17,8 @@ It outputs static web pages in `dist/` using HTML and MarkDown templates in `pub
 
 ## Demonstration:
 
-**main.rs** (`Cargo.toml`):
-```TOML
+**Cargo.toml** (`Cargo.toml`):
+```toml
 [package]
 name = "<NAME>"
 version = "<VERSION>"
